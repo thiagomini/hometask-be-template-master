@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "target": "ESNext",
+    "module": "NodeNext",
+    "strict": false,
+    "esModuleInterop": true,
+    "outDir": "./dist"
+  },
+  "include": [
+    "src/**/*" // The glob pattern specifies what files are included in the compilation.
+  ],
+  "exclude": [
+    "node_modules" // The files to be excluded from the compilation.
+  ]
+}

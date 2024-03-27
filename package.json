@@ -8,13 +8,18 @@
     "sequelize": "^6.23.0",
     "sqlite3": "^5.0.0"
   },
+  "type": "module",
   "scripts": {
-    "start": "nodemon ./src/server.js",
-    "seed": "node ./scripts/seedDb.js"
+    "start": "nodemon ./dist/server.js",
+    "seed": "node ./scripts/seedDb.js",
+    "prebuild": "rimraf ./dist",
+    "build": "tsc -p ./tsconfig.json"
   },
   "devDependencies": {
+    "@types/sequelize": "^4.28.20",
     "concurrently": "^8.0.1",
     "nodemon": "^2.0.22",
+    "rimraf": "^5.0.5",
     "tsx": "^4.7.1",
     "typescript": "^5.4.3"
   },
