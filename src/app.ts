@@ -132,14 +132,26 @@ app.post(
 
     const newBalance = profile.balance - job.price;
 
-    await profile.update({
-      balance: newBalance,
-    });
+   await sequelize.transaction(async (t) => {
+     await profile.update(
+       {
+         balance: newBalance,
+       },
+       {
+         transaction: t,
+       },
+     );
 
-    await job.update({
-      paid: true,
-      paymentDate: new Date(),
-    });
+     await job.update(
+       {
+         paid: true,
+         paymentDate: new Date(),
+       },
+       {
+         transaction: t,
+       },
+     );
+   });
 
     return res.status(200).json({
       newBalance,
