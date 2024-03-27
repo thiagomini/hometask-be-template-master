@@ -2,7 +2,7 @@ import bodyParser from 'body-parser';
 import express from 'express';
 import { Op } from 'sequelize';
 
-import { notFound } from './errors.js';
+import { httpError, notFound } from './errors.js';
 import { getProfile } from './middleware/getProfile.js';
 import { sequelize } from './model.js';
 const app = express();
@@ -17,6 +17,18 @@ app.set('models', sequelize.models);
 app.get('/contracts/:id', getProfile, async (req, res) => {
   const { Contract } = req.app.get('models');
   const { id } = req.params;
+  if (Number.isSafeInteger(+id) && id <= 0) {
+    return res
+      .status(400)
+      .json(
+        httpError({
+          detail: 'Contract id must be a positive integer',
+          title: 'Bad Request',
+          status: 400,
+        }),
+      )
+      .end();
+  }
   const contract = await Contract.findOne({
     where: {
       id,

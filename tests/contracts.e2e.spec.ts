@@ -95,7 +95,20 @@ describe('Contracts', () => {
           detail: `Contract with id ${aContract.id} not found for requesting user`,
         });
     });
-    test.todo('Returns a 400 error when the contract id is not a number');
+    test('Returns a 400 error when the contract id is not a positive number', async () => {
+      // Arrange
+      const aClient = await createProfile();
+
+      // Act
+      await request(app as Application)
+        .get('/contracts/0')
+        .set('profile_id', aClient.id.toString() as string)
+        .expect(400, {
+          title: 'Bad Request',
+          status: 400,
+          detail: 'Contract id must be a positive integer',
+        });
+    });
   });
 
   describe('GET /contracts', () => {
