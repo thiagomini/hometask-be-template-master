@@ -28,7 +28,9 @@ describe('Jobs E2E', () => {
         .expect(200, []);
     });
     test('Returns an empty list when the user has no UNPAID jobs', async () => {
-      const aClient = await profileFactory.create();
+      const aClient = await profileFactory.create({
+        type: 'client',
+      });
       const aContract = await contractFactory.create({
         clientId: aClient.id,
       });
@@ -56,6 +58,36 @@ describe('Jobs E2E', () => {
       await dsl.jobs
         .getUnpaidJobs({
           profileId: aClient.id,
+        })
+        .expect(200, [
+          {
+            id: unpaidJob.id,
+            description: unpaidJob.description,
+            price: unpaidJob.price,
+            paid: unpaidJob.paid,
+            paymentDate: unpaidJob.paymentDate,
+            createdAt: unpaidJob.createdAt.toISOString(),
+            updatedAt: unpaidJob.updatedAt.toISOString(),
+            contractId: unpaidJob.contractId,
+          },
+        ]);
+    });
+
+    test('Returns the list of unpaid active jobs belonging to the requesting contractor', async () => {
+      const aContractor = await profileFactory.create({
+        type: 'contractor',
+      });
+      const aContract = await contractFactory.create({
+        contractorId: aContractor.id,
+      });
+      const [_paidJob, unpaidJob] = await jobsFactory.createMany(2, [
+        { contractId: aContract.id, paid: true },
+        { contractId: aContract.id, paid: false },
+      ]);
+
+      await dsl.jobs
+        .getUnpaidJobs({
+          profileId: aContractor.id,
         })
         .expect(200, [
           {
