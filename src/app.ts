@@ -163,6 +163,18 @@ app.post(
   '/balances/deposit/:id',
   validateParamId('Client'),
   async (req, res) => {
+    const { Profile } = req.app.get('models');
+    const { id } = req.params;
+
+    const client = await Profile.findByPk(id);
+
+    if (!client)
+      return res.status(404).json(
+        notFound({
+          detail: `Client with id ${id} not found`,
+        }),
+      );
+
     return res.status(200).json({});
   },
 );

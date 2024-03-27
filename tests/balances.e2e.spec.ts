@@ -20,7 +20,17 @@ describe('Balances E2E', () => {
         })
         .expect(400);
     });
-    test.todo('Returns 404 when the client id does not exist in the database');
+    test('Returns 404 when the client id does not exist in the database', async () => {
+      await dsl.balances
+        .deposit(100, {
+          profileId: 999_999,
+        })
+        .expect(404, {
+          detail: 'Client with id 999999 not found',
+          title: 'Entity not found',
+          status: 404,
+        });
+    });
     test.todo('Returns 400 when the user is a contractor');
     test.todo(
       'Returns 409 when the deposit amount surpasses more than 25% of the client total of jobs to pay',
