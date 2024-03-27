@@ -4,6 +4,7 @@ import { Op } from 'sequelize';
 
 import { httpError, notFound } from './errors.js';
 import { getProfile } from './middleware/getProfile.js';
+import { validateParamId } from './middleware/validators.js';
 import { sequelize } from './model.js';
 const app = express();
 app.use(bodyParser.json());
@@ -14,21 +15,9 @@ app.set('models', sequelize.models);
  * FIX ME!
  * @returns contract by id
  */
-app.get('/contracts/:id', getProfile, async (req, res) => {
+app.get('/contracts/:id', getProfile, validateParamId, async (req, res) => {
   const { Contract } = req.app.get('models');
   const { id } = req.params;
-  if (Number.isSafeInteger(+id) && id <= 0) {
-    return res
-      .status(400)
-      .json(
-        httpError({
-          detail: 'Contract id must be a positive integer',
-          title: 'Bad Request',
-          status: 400,
-        }),
-      )
-      .end();
-  }
   const contract = await Contract.findOne({
     where: {
       id,

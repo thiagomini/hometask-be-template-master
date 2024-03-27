@@ -16,3 +16,7 @@ export function httpError(options: {
 export function notFound(options: { detail: string }) {
   return httpError({ status: 404, title: 'Entity not found', ...options });
 }
+
+export function badRequest(options: { detail: string }) {
+  return httpError({ status: 400, title: 'Bad Request', ...options });
+}
