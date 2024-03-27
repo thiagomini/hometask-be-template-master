@@ -8,7 +8,6 @@ import { initializeFactories } from './factories/init.js';
 import {
   clientFactory,
   contractorFactory,
-  profileFactory,
 } from './factories/profile.factory.js';
 import app from '../src/app.js';
 
@@ -88,10 +87,7 @@ describe('Contracts E2E', () => {
     });
     test('Returns a 404 error if the contract with the given id does not belong to the requesting user', async () => {
       // Arrange
-      const [aClient, anotherClient] = await Promise.all([
-        profileFactory.create(),
-        profileFactory.create(),
-      ]);
+      const [aClient, anotherClient] = await clientFactory.createMany(2);
       const aContract = await contractFactory.create({
         terms: 'Some terms',
         status: 'new',
