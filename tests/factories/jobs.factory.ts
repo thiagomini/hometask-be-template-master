@@ -16,3 +16,13 @@ export const jobsFactory = FactoryGirl.define(Job, () => {
     contractId: contractFactory.associate('id'),
   };
 });
+
+export const paidJobFactory = jobsFactory.extend(() => ({
+  paid: true,
+  paymentDate: faker.date.recent(),
+}));
+
+export const unpaidJobFactory = jobsFactory.extend(() => ({
+  paid: false,
+  paymentDate: null,
+}));

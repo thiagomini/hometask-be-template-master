@@ -4,7 +4,11 @@ import test, { before, describe } from 'node:test';
 import { createDSL } from './dsl/dsl.factory.js';
 import { contractFactory } from './factories/contract.factory.js';
 import { initializeFactories } from './factories/init.js';
-import { jobsFactory } from './factories/jobs.factory.js';
+import {
+  jobsFactory,
+  paidJobFactory,
+  unpaidJobFactory,
+} from './factories/jobs.factory.js';
 import { profileFactory } from './factories/profile.factory.js';
 import app from '../src/app.js';
 
@@ -80,9 +84,13 @@ describe('Jobs E2E', () => {
       const aContract = await contractFactory.create({
         contractorId: aContractor.id,
       });
-      const [_paidJob, unpaidJob] = await jobsFactory.createMany(2, [
-        { contractId: aContract.id, paid: true },
-        { contractId: aContract.id, paid: false },
+      const [_paidJob, unpaidJob] = await Promise.all([
+        paidJobFactory.create({
+          contractId: aContract.id,
+        }),
+        unpaidJobFactory.create({
+          contractId: aContract.id,
+        }),
       ]);
 
       await dsl.jobs
@@ -95,7 +103,7 @@ describe('Jobs E2E', () => {
             description: unpaidJob.description,
             price: unpaidJob.price,
             paid: unpaidJob.paid,
-            paymentDate: unpaidJob.paymentDate,
+            paymentDate: null,
             createdAt: unpaidJob.createdAt.toISOString(),
             updatedAt: unpaidJob.updatedAt.toISOString(),
             contractId: unpaidJob.contractId,
