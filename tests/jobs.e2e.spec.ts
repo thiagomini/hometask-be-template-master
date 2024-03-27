@@ -1,13 +1,11 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
+import assert from 'node:assert/strict';
 import test, { before, describe } from 'node:test';
 
 import { createDSL } from './dsl/dsl.factory.js';
 import { contractFactory } from './factories/contract.factory.js';
 import { initializeFactories } from './factories/init.js';
-import {
-  paidJobFactory,
-  unpaidJobFactory
-} from './factories/jobs.factory.js';
+import { paidJobFactory, unpaidJobFactory } from './factories/jobs.factory.js';
 import {
   clientFactory,
   contractorFactory,
@@ -261,6 +259,10 @@ describe('Jobs E2E', () => {
         .expect(200, {
           newBalance: 30,
         });
+
+      // Assert
+      await aClient.reload();
+      assert.equal(aClient.balance, 30);
     });
   });
 });

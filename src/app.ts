@@ -5,7 +5,7 @@ import { Op } from 'sequelize';
 import { conflict, httpError, notFound } from './errors.js';
 import { getProfile } from './middleware/getProfile.js';
 import { validateParamId } from './middleware/validators.js';
-import { sequelize } from './model.js';
+import { type Profile, sequelize } from './model.js';
 const app = express();
 app.use(bodyParser.json());
 app.set('sequelize', sequelize);
@@ -88,10 +88,12 @@ app.post(
     const { Job, Contract } = req.app.get('models');
     const { id: jobId } = req.params;
 
+    const profile: Profile = req.profile;
+
     const job = await Job.findOne({
       where: {
         id: jobId,
-        '$Contract.clientId$': req.profile.id,
+        '$Contract.clientId$': profile.id,
       },
       include: {
         model: Contract,
@@ -118,7 +120,7 @@ app.post(
       );
     }
 
-    if (req.profile.balance < job.price) {
+    if (profile.balance < job.price) {
       return res.status(400).json(
         httpError({
           status: 400,
@@ -128,7 +130,11 @@ app.post(
       );
     }
 
-    const newBalance = req.profile.balance - job.price;
+    const newBalance = profile.balance - job.price;
+
+    await profile.update({
+      balance: newBalance,
+    });
 
     return res.status(200).json({
       newBalance,
