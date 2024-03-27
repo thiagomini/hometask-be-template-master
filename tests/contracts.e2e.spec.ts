@@ -2,6 +2,7 @@
 import test, { describe } from 'node:test';
 
 import { type Application } from 'express';
+import { type InferCreationAttributes } from 'sequelize';
 import request from 'supertest';
 
 import app from '../src/app';
@@ -16,14 +17,8 @@ describe('Contracts', () => {
     });
     test('Returns the contract with the given id belonging to the requesting user', async () => {
       // Arrange
-      const aClient = await Profile.create({
-        firstName: 'John',
-        lastName: 'Doe',
-        profession: 'Software Engineer',
-        balance: 1000,
-        type: 'client',
-      });
-      const aContract = await Contract.create({
+      const aClient = await createProfile();
+      const aContract = await createContract({
         terms: 'Some terms',
         status: 'new',
         clientId: aClient.id,
@@ -57,3 +52,26 @@ describe('Contracts', () => {
     test.todo('Returns 401 when the user is not authenticated');
   });
 });
+
+async function createProfile(
+  attributes: Partial<InferCreationAttributes<Profile>> = {},
+): Promise<Profile> {
+  return await Profile.create({
+    firstName: 'John',
+    lastName: 'Doe',
+    profession: 'Software Engineer',
+    balance: 1000,
+    type: 'client',
+    ...attributes,
+  });
+}
+
+async function createContract(
+  attributes: Partial<InferCreationAttributes<Contract>> = {},
+): Promise<Contract> {
+  return await Contract.create({
+    terms: 'Some terms',
+    status: 'new',
+    ...attributes,
+  });
+}
