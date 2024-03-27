@@ -2,7 +2,9 @@
 import test, { before, describe } from 'node:test';
 
 import { createDSL } from './dsl/dsl.factory.js';
+import { contractFactory } from './factories/contract.factory.js';
 import { initializeFactories } from './factories/init.js';
+import { jobsFactory } from './factories/jobs.factory.js';
 import { profileFactory } from './factories/profile.factory.js';
 import app from '../src/app.js';
 
@@ -19,6 +21,22 @@ describe('Jobs E2E', () => {
     });
     test('Returns an empty list when the user has no jobs', async () => {
       const aClient = await profileFactory.create();
+      await dsl.jobs
+        .getUnpaidJobs({
+          profileId: aClient.id,
+        })
+        .expect(200, []);
+    });
+    test('Returns an empty list when the user has no UNPAID jobs', async () => {
+      const aClient = await profileFactory.create();
+      const aContract = await contractFactory.create({
+        clientId: aClient.id,
+      });
+      await jobsFactory.create({
+        contractId: aContract.id,
+        paid: true,
+      });
+
       await dsl.jobs
         .getUnpaidJobs({
           profileId: aClient.id,

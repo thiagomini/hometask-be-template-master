@@ -92,9 +92,26 @@ Contract.init(
   },
 );
 
-export class Job extends Sequelize.Model {}
+export class Job extends Sequelize.Model<
+  InferAttributes<Job>,
+  InferCreationAttributes<Job>
+> {
+  declare readonly id: CreationOptional<number>;
+  declare readonly description: string;
+  declare readonly price: number;
+  declare readonly paid: boolean;
+  declare readonly paymentDate: Date;
+  declare readonly createdAt: CreationOptional<Date>;
+  declare readonly updatedAt: CreationOptional<Date>;
+  declare readonly contractId: ForeignKey<Contract['id']>;
+}
 Job.init(
   {
+    id: {
+      type: Sequelize.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
     description: {
       type: Sequelize.TEXT,
       allowNull: false,
@@ -110,6 +127,8 @@ Job.init(
     paymentDate: {
       type: Sequelize.DATE,
     },
+    createdAt: Sequelize.DATE,
+    updatedAt: Sequelize.DATE,
   },
   {
     sequelize,
