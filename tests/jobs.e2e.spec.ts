@@ -43,9 +43,33 @@ describe('Jobs E2E', () => {
         })
         .expect(200, []);
     });
-    test.todo(
-      'Returns the list of unpaid active jobs belonging to the requesting client',
-    );
+    test('Returns the list of unpaid active jobs belonging to the requesting client', async () => {
+      const aClient = await profileFactory.create();
+      const aContract = await contractFactory.create({
+        clientId: aClient.id,
+      });
+      const [_paidJob, unpaidJob] = await jobsFactory.createMany(2, [
+        { contractId: aContract.id, paid: true },
+        { contractId: aContract.id, paid: false },
+      ]);
+
+      await dsl.jobs
+        .getUnpaidJobs({
+          profileId: aClient.id,
+        })
+        .expect(200, [
+          {
+            id: unpaidJob.id,
+            description: unpaidJob.description,
+            price: unpaidJob.price,
+            paid: unpaidJob.paid,
+            paymentDate: unpaidJob.paymentDate,
+            createdAt: unpaidJob.createdAt.toISOString(),
+            updatedAt: unpaidJob.updatedAt.toISOString(),
+            contractId: unpaidJob.contractId,
+          },
+        ]);
+    });
   });
 
   describe('POST /jobs/:id/pay', () => {

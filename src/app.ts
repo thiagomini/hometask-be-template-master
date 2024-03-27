@@ -61,7 +61,22 @@ app.get('/contracts', getProfile, async (req, res) => {
 });
 
 app.get('/jobs/unpaid', getProfile, async (req, res) => {
-  return res.json([]);
+  const { Job, Contract } = req.app.get('models');
+  const jobs = await Job.findAll({
+    where: {
+      paid: false,
+      [Op.or]: {
+        '$Contract.clientId$': req.profile.id,
+        '$Contract.contractorId$': req.profile.id,
+      },
+    },
+    include: {
+      model: Contract,
+      as: 'Contract',
+      attributes: [],
+    },
+  });
+  return res.json(jobs);
 });
 
 export default app;
