@@ -4,5 +4,6 @@
     "src/**/*.ts",
     "scripts/**/*.ts",
     "tests/**/*.ts",
+    "types/**/*.ts",
   ],
 }

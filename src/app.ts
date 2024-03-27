@@ -32,14 +32,14 @@ app.get(
       },
     });
     if (!contract)
-      return res
-        .status(404)
-        .json(
-          notFound({
-            detail: `Contract with id ${id} not found for requesting user`,
-          }),
-        )
-        .end();
+       res
+         .status(404)
+         .json(
+           notFound({
+             detail: `Contract with id ${id} not found for requesting user`,
+           }),
+         )
+         .end();
     res.json(contract);
   },
 );

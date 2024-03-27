@@ -19,7 +19,8 @@
     "format": "prettier --write ./src/**/*.ts",
     "lint:check": "eslint ./src/**/*.ts",
     "lint": "eslint ./src/**/*.ts --fix",
-    "test:e2e": "glob -d -c \"node --import tsx --test\" **/*.e2e.spec.ts"
+    "test:e2e": "glob -d -c \"node --import tsx --test\" **/*.e2e.spec.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.eslint.json"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",

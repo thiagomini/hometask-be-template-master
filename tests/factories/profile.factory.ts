@@ -1,7 +1,8 @@
 import { faker } from '@faker-js/faker';
 import { FactoryGirl } from 'factory-girl-ts';
 
-import { Profile } from '../../src/model';
+import { Profile } from '../../src/model.js';
+
 export const profileFactory = FactoryGirl.define(Profile, () => ({
   firstName: faker.person.firstName(),
   lastName: faker.person.lastName(),

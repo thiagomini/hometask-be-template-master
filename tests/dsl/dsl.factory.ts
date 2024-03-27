@@ -1,6 +1,6 @@
 import { type Express } from 'express';
 
-import { contracts } from './contracts.dsl';
+import { contracts } from './contracts.dsl.js';
 
 /**
  * DSL factory creates an object useful to encapsulate details of the API. If an endpoint changes the

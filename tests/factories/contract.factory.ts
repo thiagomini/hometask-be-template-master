@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { FactoryGirl } from 'factory-girl-ts';
 
-import { Contract } from '../../src/model';
+import { Contract } from '../../src/model.js';
 
 export const contractFactory = FactoryGirl.define(Contract, () => ({
   terms: faker.lorem.sentence(),

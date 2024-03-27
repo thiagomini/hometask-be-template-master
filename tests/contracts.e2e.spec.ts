@@ -2,11 +2,11 @@
 import test, { before, describe } from 'node:test';
 
 
-import { createDSL } from './dsl/dsl.factory';
-import { contractFactory } from './factories/contract.factory';
-import { initializeFactories } from './factories/init';
-import { profileFactory } from './factories/profile.factory';
-import app from '../src/app';
+import { createDSL } from './dsl/dsl.factory.js';
+import { contractFactory } from './factories/contract.factory.js';
+import { initializeFactories } from './factories/init.js';
+import { profileFactory } from './factories/profile.factory.js';
+import app from '../src/app.js';
 
 describe('Contracts', () => {
   const dsl = createDSL(app);
