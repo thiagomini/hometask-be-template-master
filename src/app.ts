@@ -128,7 +128,9 @@ app.post(
       );
     }
 
-    return res.status(200).json({});
+    return res.status(200).json({
+      newBalance: 50,
+    });
   },
 );
 
