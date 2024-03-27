@@ -16,16 +16,24 @@
     "prebuild": "rimraf ./dist",
     "build": "tsc -p ./tsconfig.json",
     "format:check": "prettier --check ./src/**/*.ts",
-    "format": "prettier --write ./src/**/*.ts"
+    "format": "prettier --write ./src/**/*.ts",
+    "lint:check": "eslint ./src/**/*.ts",
+    "lint": "eslint ./src/**/*.ts --fix"
+
   },
   "devDependencies": {
+    "@types/node": "^20.11.30",
     "@types/sequelize": "^4.28.20",
+    "@typescript-eslint/eslint-plugin": "^7.4.0",
+    "@typescript-eslint/parser": "^7.4.0",
     "concurrently": "^8.0.1",
+    "eslint": "^8.57.0",
     "nodemon": "^2.0.22",
     "prettier": "^3.2.5",
     "rimraf": "^5.0.5",
     "tsx": "^4.7.1",
-    "typescript": "^5.4.3"
+    "typescript": "^5.4.3",
+    "typescript-eslint": "^7.4.0"
   },
   "engines": {
     "node": ">=10.16.3"

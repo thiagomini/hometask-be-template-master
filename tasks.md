@@ -1,6 +1,6 @@
 - [x] Add typescript to the project
 - [x] Add prettier to the project
-- [] Add eslint to the project
+- [x] Add eslint to the project
 - [] Change the package type to module
 - [] Create a basic example test using node's internal testing library
 - [] Add .node-version file and .nvmrc link

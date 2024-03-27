@@ -6,7 +6,8 @@
     "module": "NodeNext",
     "strict": false,
     "esModuleInterop": true,
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "types": ["node"]
   },
   "include": [
     "src/**/*" // The glob pattern specifies what files are included in the compilation.
