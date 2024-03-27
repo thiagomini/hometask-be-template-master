@@ -98,6 +98,16 @@ describe('Contracts', () => {
   });
 
   describe('GET /contracts', () => {
+    test('Returns an empty list if the user has no contracts', async () => {
+      // Arrange
+      const aClient = await createProfile();
+
+      // Act
+      await request(app as Application)
+        .get('/contracts')
+        .set('profile_id', aClient.id.toString() as string)
+        .expect(200, []);
+    });
     test.todo(
       'Returns a list of non-terminated contracts belonging to the requesting user',
     );

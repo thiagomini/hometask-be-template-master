@@ -38,4 +38,8 @@ app.get('/contracts/:id', getProfile, async (req, res) => {
   res.json(contract);
 });
 
+app.get('/contracts', getProfile, (req, res) => {
+  return res.json([]);
+});
+
 export default app;
