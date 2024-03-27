@@ -14,12 +14,15 @@
     "start:dev": "tsx watch ./src/server.ts",
     "seed": "node ./scripts/seedDb.js",
     "prebuild": "rimraf ./dist",
-    "build": "tsc -p ./tsconfig.json"
+    "build": "tsc -p ./tsconfig.json",
+    "format:check": "prettier --check ./src/**/*.ts",
+    "format": "prettier --write ./src/**/*.ts"
   },
   "devDependencies": {
     "@types/sequelize": "^4.28.20",
     "concurrently": "^8.0.1",
     "nodemon": "^2.0.22",
+    "prettier": "^3.2.5",
     "rimraf": "^5.0.5",
     "tsx": "^4.7.1",
     "typescript": "^5.4.3"

@@ -1,4 +1,3 @@
-
 export const getProfile = async (req, res, next) => {
   const { Profile } = req.app.get('models');
   const profile = await Profile.findOne({

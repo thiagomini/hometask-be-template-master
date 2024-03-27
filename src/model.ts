@@ -72,7 +72,7 @@ Job.init(
   {
     sequelize,
     modelName: 'Job',
-  }
+  },
 );
 
 Profile.hasMany(Contract, { as: 'Contractor', foreignKey: 'ContractorId' });
