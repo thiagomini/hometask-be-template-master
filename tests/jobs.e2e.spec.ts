@@ -24,17 +24,18 @@ describe('Jobs E2E', () => {
 
   describe('GET /jobs/unpaid', () => {
     test('Returns 401 when the user is not authenticated', async () => {
-      await dsl.jobs.getUnpaidJobs().expect(401);
+      await dsl.jobs.listUnpaidJobs().expect(401);
     });
     test('Returns an empty list when the user has no jobs', async () => {
       const aClient = await profileFactory.create();
       await dsl.jobs
-        .getUnpaidJobs({
+        .listUnpaidJobs({
           profileId: aClient.id,
         })
         .expect(200, []);
     });
     test('Returns an empty list when the user has no UNPAID jobs', async () => {
+      // Arrange
       const aClient = await clientFactory.create();
       const aContract = await contractFactory.create({
         clientId: aClient.id,
@@ -43,16 +44,39 @@ describe('Jobs E2E', () => {
         contractId: aContract.id,
       });
 
+      // Act
       await dsl.jobs
-        .getUnpaidJobs({
+        .listUnpaidJobs({
           profileId: aClient.id,
         })
         .expect(200, []);
     });
+
+    test('Returns an empty list when the user has no active jobs', async () => {
+      // Arrange
+      const aClient = await clientFactory.create();
+      const [_newContract, terminatedContract] =
+        await contractFactory.createMany(2, [
+          { clientId: aClient.id, status: 'new' },
+          { clientId: aClient.id, status: 'terminated' },
+        ]);
+      await unpaidJobFactory.create({
+        contractId: terminatedContract.id,
+      });
+
+      // Act
+      await dsl.jobs
+        .listUnpaidJobs({
+          profileId: aClient.id,
+        })
+        .expect(200, []);
+    });
+
     test('Returns the list of unpaid active jobs belonging to the requesting client', async () => {
       const aClient = await clientFactory.create();
       const aContract = await contractFactory.create({
         clientId: aClient.id,
+        status: 'in_progress',
       });
       const [_paidJob, unpaidJob] = await Promise.all([
         paidJobFactory.create({
@@ -64,7 +88,7 @@ describe('Jobs E2E', () => {
       ]);
 
       await dsl.jobs
-        .getUnpaidJobs({
+        .listUnpaidJobs({
           profileId: aClient.id,
         })
         .expect(200, [
@@ -82,9 +106,11 @@ describe('Jobs E2E', () => {
     });
 
     test('Returns the list of unpaid active jobs belonging to the requesting contractor', async () => {
+      // Arrange
       const aContractor = await contractorFactory.create();
       const aContract = await contractFactory.create({
         contractorId: aContractor.id,
+        status: 'in_progress',
       });
       const [_paidJob, unpaidJob] = await Promise.all([
         paidJobFactory.create({
@@ -95,8 +121,9 @@ describe('Jobs E2E', () => {
         }),
       ]);
 
+      // Act
       await dsl.jobs
-        .getUnpaidJobs({
+        .listUnpaidJobs({
           profileId: aContractor.id,
         })
         .expect(200, [

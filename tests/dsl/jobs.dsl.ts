@@ -7,7 +7,7 @@ export type JobsOptions = RequestOptions;
 
 export function jobs(app: Express) {
   return Object.freeze({
-    getUnpaidJobs(options: JobsOptions = {}) {
+    listUnpaidJobs(options: JobsOptions = {}) {
       return request(app)
         .get('/jobs/unpaid')
         .set('profile_id', String(options?.profileId?.toString() ?? ''));
