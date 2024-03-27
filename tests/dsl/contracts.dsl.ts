@@ -12,5 +12,10 @@ export function contracts(app: Express) {
         .get(`/contracts/${id}`)
         .set('profile_id', options?.profileId.toString() ?? '');
     },
+    async list(options?: ContractOptions) {
+      return await request(app)
+        .get('/contracts')
+        .set('profile_id', options?.profileId.toString() ?? '');
+    },
   });
 }

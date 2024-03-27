@@ -135,10 +135,11 @@ describe('Contracts', () => {
       const aClient = await createProfile();
 
       // Act
-      await request(app as Application)
-        .get('/contracts')
-        .set('profile_id', aClient.id.toString() as string)
-        .expect(200, []);
+      const response = await dsl.contracts.list({ profileId: aClient.id });
+
+      // Assert
+      assert.equal(response.status, 200);
+      assert.deepEqual(response.body, []);
     });
     test('Returns a list of non-terminated contracts belonging to the requesting user', async () => {
       // Arrange
@@ -157,26 +158,27 @@ describe('Contracts', () => {
       ]);
 
       // Act
-      await request(app as Application)
-        .get('/contracts')
-        .set('profile_id', aClient.id.toString() as string)
-        .expect(200, [
-          {
-            id: aContract.id,
-            terms: 'Some terms',
-            status: 'new',
-            createdAt: aContract.createdAt.toISOString(),
-            updatedAt: aContract.updatedAt.toISOString(),
-            clientId: aClient.id,
-            contractorId: null,
-          },
-        ]);
+      const response = await dsl.contracts.list({ profileId: aClient.id });
+
+      // Assert
+      assert.equal(response.status, 200);
+      assert.deepEqual(response.body, [
+        {
+          id: aContract.id,
+          terms: 'Some terms',
+          status: 'new',
+          createdAt: aContract.createdAt.toISOString(),
+          updatedAt: aContract.updatedAt.toISOString(),
+          clientId: aClient.id,
+          contractorId: null,
+        },
+      ]);
     });
 
     test('Returns 401 when the user is not authenticated', async () => {
-      await request(app as Application)
-        .get('/contracts')
-        .expect(401);
+      const response = await dsl.contracts.list();
+
+      assert.equal(response.status, 401);
     });
   });
 });
