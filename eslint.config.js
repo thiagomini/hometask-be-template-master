@@ -1,8 +1,8 @@
 // @ts-check
 import eslint from '@eslint/js';
+import imports from 'eslint-plugin-import-x';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
-import imports from 'eslint-plugin-import-x';
 
 export default tseslint.config(
   eslint.configs.recommended,
@@ -15,7 +15,7 @@ export default tseslint.config(
         ...globals.node,
       },
       parserOptions: {
-        project: true,
+        project: './tsconfig.eslint.json',
         tsconfigRootDir: import.meta.dirname,
       },
     },

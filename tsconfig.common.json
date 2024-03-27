@@ -6,13 +6,8 @@
     "module": "NodeNext",
     "strict": false,
     "esModuleInterop": true,
-    "outDir": "./dist",
     "types": ["node"]
   },
-  "include": [
-    "src/**/*",
-    "./eslint.config.js",
-  ],
   "exclude": [
     "node_modules"
   ]
