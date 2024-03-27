@@ -51,7 +51,6 @@ describe('Jobs E2E', () => {
         })
         .expect(200, []);
     });
-
     test('Returns an empty list when the user has no active jobs', async () => {
       // Arrange
       const aClient = await clientFactory.create();
@@ -71,7 +70,6 @@ describe('Jobs E2E', () => {
         })
         .expect(200, []);
     });
-
     test('Returns the list of unpaid active jobs belonging to the requesting client', async () => {
       const aClient = await clientFactory.create();
       const aContract = await contractFactory.create({
@@ -104,7 +102,6 @@ describe('Jobs E2E', () => {
           },
         ]);
     });
-
     test('Returns the list of unpaid active jobs belonging to the requesting contractor', async () => {
       // Arrange
       const aContractor = await contractorFactory.create();
@@ -142,7 +139,9 @@ describe('Jobs E2E', () => {
   });
 
   describe('POST /jobs/:id/pay', () => {
-    test.todo('Returns 401 when the user is not authenticated');
+    test('Returns 401 when the user is not authenticated', async () => {
+      await dsl.jobs.payJob(1).expect(401);
+    });
     test.todo('Returns 404 when the job does not exist');
     test.todo('Returns 404 when the job does not belong to the client');
     test.todo('Returns 400 when the job id is not a positive number');

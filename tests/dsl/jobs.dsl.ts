@@ -12,5 +12,10 @@ export function jobs(app: Express) {
         .get('/jobs/unpaid')
         .set('profile_id', String(options?.profileId?.toString() ?? ''));
     },
+    payJob(jobId: number, options: JobsOptions = {}) {
+      return request(app)
+        .post(`/jobs/${jobId}/pay`)
+        .set('profile_id', String(options?.profileId?.toString() ?? ''));
+    },
   });
 }

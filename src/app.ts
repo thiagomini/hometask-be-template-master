@@ -80,4 +80,8 @@ app.get('/jobs/unpaid', getProfile, async (req, res) => {
   return res.json(jobs);
 });
 
+app.post('/jobs/:jobId/pay', getProfile, async (req, res) => {
+  res.json({});
+});
+
 export default app;
