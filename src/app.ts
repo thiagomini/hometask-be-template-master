@@ -32,15 +32,15 @@ app.get(
       },
     });
     if (!contract)
-       res
-         .status(404)
-         .json(
-           notFound({
-             detail: `Contract with id ${id} not found for requesting user`,
-           }),
-         )
-         .end();
-    res.json(contract);
+      return res
+        .status(404)
+        .json(
+          notFound({
+            detail: `Contract with id ${id} not found for requesting user`,
+          }),
+        )
+        .end();
+    return res.json(contract);
   },
 );
 
@@ -59,5 +59,7 @@ app.get('/contracts', getProfile, async (req, res) => {
   });
   res.json(contracts);
 });
+
+app.get('/jobs/unpaid', getProfile, async (req, res) => {});
 
 export default app;
