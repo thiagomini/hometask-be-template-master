@@ -1,9 +1,25 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
-import test, { describe } from 'node:test';
+import test, { before, describe } from 'node:test';
+
+import { createDSL } from './dsl/dsl.factory.js';
+import { initializeFactories } from './factories/init.js';
+import app from '../src/app.js';
 
 describe('Balances E2E', () => {
+  const dsl = createDSL(app);
+
+  before(() => {
+    initializeFactories();
+  });
+
   describe('POST /balances/deposit/:clientId', () => {
-    test.todo('Returns 400 when the client id is not a positive integer');
+    test('Returns 400 when the client id is not a positive integer', async () => {
+      await dsl.balances
+        .deposit(100, {
+          profileId: 0,
+        })
+        .expect(400);
+    });
     test.todo('Returns 404 when the client id does not exist in the database');
     test.todo('Returns 400 when the user is a contractor');
     test.todo(

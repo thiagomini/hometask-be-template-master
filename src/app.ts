@@ -159,4 +159,12 @@ app.post(
   },
 );
 
+app.post(
+  '/balances/deposit/:id',
+  validateParamId('Client'),
+  async (req, res) => {
+    return res.status(200).json({});
+  },
+);
+
 export default app;

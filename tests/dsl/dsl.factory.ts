@@ -1,5 +1,6 @@
 import { type Express } from 'express';
 
+import { balances } from './balances.dsl.js';
 import { contracts } from './contracts.dsl.js';
 import { jobs } from './jobs.dsl.js';
 
@@ -12,5 +13,6 @@ export function createDSL(app: Express) {
   return Object.freeze({
     contracts: contracts(app),
     jobs: jobs(app),
+    balances: balances(app),
   });
 }
