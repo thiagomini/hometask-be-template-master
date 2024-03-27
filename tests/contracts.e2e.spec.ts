@@ -26,20 +26,20 @@ describe('Contracts', () => {
       const aContract = await Contract.create({
         terms: 'Some terms',
         status: 'new',
-        clientId: aClient.get('id'),
+        clientId: aClient.id,
       });
 
       // Act
       await request(app as Application)
-        .get(`/contracts/${aContract.get('id')}`)
-        .set('profile_id', aClient.get('id').toString() as string)
+        .get(`/contracts/${aContract.id}`)
+        .set('profile_id', aClient.id.toString() as string)
         .expect(200, {
-          id: aContract.get('id'),
+          id: aContract.id,
           terms: 'Some terms',
           status: 'new',
-          createdAt: aContract.get('createdAt').toISOString(),
-          updatedAt: aContract.get('updatedAt').toISOString(),
-          clientId: aClient.get('id'),
+          createdAt: aContract.createdAt.toISOString(),
+          updatedAt: aContract.updatedAt.toISOString(),
+          clientId: aClient.id,
           contractorId: null,
         });
     });

@@ -1,13 +1,35 @@
-import Sequelize from 'sequelize';
+import Sequelize, {
+  type CreationOptional,
+  type ForeignKey,
+  type InferAttributes,
+  type InferCreationAttributes,
+} from 'sequelize';
 
 export const sequelize = new Sequelize.Sequelize({
   dialect: 'sqlite',
   storage: './database.sqlite3',
 });
 
-export class Profile extends Sequelize.Model {}
+export class Profile extends Sequelize.Model<
+  InferAttributes<Profile>,
+  InferCreationAttributes<Profile>
+> {
+  declare readonly id: CreationOptional<number>;
+  declare readonly firstName: string;
+  declare readonly lastName: string;
+  declare readonly profession: string;
+  declare readonly balance: number;
+  declare readonly type: 'client' | 'contractor';
+  declare readonly createdAt: CreationOptional<Date>;
+  declare readonly updatedAt: CreationOptional<Date>;
+}
 Profile.init(
   {
+    id: {
+      type: Sequelize.INTEGER.UNSIGNED,
+      autoIncrement: true,
+      primaryKey: true,
+    },
     firstName: {
       type: Sequelize.STRING,
       allowNull: false,
@@ -26,6 +48,8 @@ Profile.init(
     type: {
       type: Sequelize.ENUM('client', 'contractor'),
     },
+    createdAt: Sequelize.DATE,
+    updatedAt: Sequelize.DATE,
   },
   {
     sequelize,
@@ -33,9 +57,25 @@ Profile.init(
   },
 );
 
-export class Contract extends Sequelize.Model {}
+export class Contract extends Sequelize.Model<
+  InferAttributes<Contract>,
+  InferCreationAttributes<Contract>
+> {
+  declare readonly id: CreationOptional<number>;
+  declare readonly terms: string;
+  declare readonly status: 'new' | 'in_progress' | 'terminated';
+  declare readonly clientId: ForeignKey<Profile['id']>;
+  declare readonly contractorId: ForeignKey<Profile['id']>;
+  declare readonly createdAt: CreationOptional<Date>;
+  declare readonly updatedAt: CreationOptional<Date>;
+}
 Contract.init(
   {
+    id: {
+      type: Sequelize.INTEGER.UNSIGNED,
+      autoIncrement: true,
+      primaryKey: true,
+    },
     terms: {
       type: Sequelize.TEXT,
       allowNull: false,
@@ -43,6 +83,8 @@ Contract.init(
     status: {
       type: Sequelize.ENUM('new', 'in_progress', 'terminated'),
     },
+    createdAt: Sequelize.DATE,
+    updatedAt: Sequelize.DATE,
   },
   {
     sequelize,
