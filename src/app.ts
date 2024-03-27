@@ -136,6 +136,11 @@ app.post(
       balance: newBalance,
     });
 
+    await job.update({
+      paid: true,
+      paymentDate: new Date(),
+    });
+
     return res.status(200).json({
       newBalance,
     });

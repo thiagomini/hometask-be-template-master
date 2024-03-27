@@ -262,7 +262,10 @@ describe('Jobs E2E', () => {
 
       // Assert
       await aClient.reload();
+      await aJob.reload();
       assert.equal(aClient.balance, 30);
+      assert.equal(aJob.paid, true);
+      assert.notEqual(aJob.paymentDate, null);
     });
   });
 });
