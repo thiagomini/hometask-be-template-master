@@ -1,19 +1,22 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
+import assert from 'node:assert/strict';
 import test, { describe } from 'node:test';
 
 import { type Application } from 'express';
 import { type InferCreationAttributes } from 'sequelize';
 import request from 'supertest';
 
+import { createDSL } from './dsl/dsl.factory';
 import app from '../src/app';
 import { Contract, Profile } from '../src/model';
 
 describe('Contracts', () => {
+  const dsl = createDSL(app);
+
   describe('GET /contracts/:id', () => {
     test('Returns 401 when the user is not authenticated', async () => {
-      await request(app as Application)
-        .get('/contracts/1')
-        .expect(401);
+      const response = await dsl.contracts.getContractById(1);
+      assert.equal(response.status, 401);
     });
     test('Returns the contract with the given id belonging to the requesting client', async () => {
       // Arrange
@@ -25,18 +28,21 @@ describe('Contracts', () => {
       });
 
       // Act
-      await request(app as Application)
-        .get(`/contracts/${aContract.id}`)
-        .set('profile_id', aClient.id.toString() as string)
-        .expect(200, {
-          id: aContract.id,
-          terms: 'Some terms',
-          status: 'new',
-          createdAt: aContract.createdAt.toISOString(),
-          updatedAt: aContract.updatedAt.toISOString(),
-          clientId: aClient.id,
-          contractorId: null,
-        });
+      const response = await dsl.contracts.getContractById(aContract.id, {
+        profileId: aClient.id,
+      });
+
+      // Assert
+      assert.equal(response.status, 200);
+      assert.deepEqual(response.body, {
+        id: aContract.id,
+        terms: 'Some terms',
+        status: 'new',
+        createdAt: aContract.createdAt.toISOString(),
+        updatedAt: aContract.updatedAt.toISOString(),
+        clientId: aClient.id,
+        contractorId: null,
+      });
     });
     test('Returns the contract with the given id belonging to the requesting contractor', async () => {
       // Arrange
@@ -50,28 +56,37 @@ describe('Contracts', () => {
       });
 
       // Act
-      await request(app as Application)
-        .get(`/contracts/${aContract.id}`)
-        .set('profile_id', aContractor.id.toString() as string)
-        .expect(200, {
-          id: aContract.id,
-          terms: 'Some terms',
-          status: 'new',
-          createdAt: aContract.createdAt.toISOString(),
-          updatedAt: aContract.updatedAt.toISOString(),
-          contractorId: aContractor.id,
-          clientId: null,
-        });
+      const response = await dsl.contracts.getContractById(aContract.id, {
+        profileId: aContractor.id,
+      });
+
+      assert.equal(response.status, 200);
+      assert.deepEqual(response.body, {
+        id: aContract.id,
+        terms: 'Some terms',
+        status: 'new',
+        createdAt: aContract.createdAt.toISOString(),
+        updatedAt: aContract.updatedAt.toISOString(),
+        contractorId: aContractor.id,
+        clientId: null,
+      });
     });
     test('Returns a 404 error if the contract with the given id does not exist', async () => {
       // Arrange
       const aClient = await createProfile();
 
       // Act
-      await request(app as Application)
-        .get('/contracts/999999')
-        .set('profile_id', aClient.id.toString() as string)
-        .expect(404);
+      const response = await dsl.contracts.getContractById(999999, {
+        profileId: aClient.id,
+      });
+
+      // Assert
+      assert.equal(response.status, 404);
+      assert.deepEqual(response.body, {
+        title: 'Entity not found',
+        status: 404,
+        detail: 'Contract with id 999999 not found for requesting user',
+      });
     });
     test('Returns a 404 error if the contract with the given id does not belong to the requesting user', async () => {
       // Arrange
@@ -86,14 +101,17 @@ describe('Contracts', () => {
       });
 
       // Act
-      await request(app as Application)
-        .get(`/contracts/${aContract.id}`)
-        .set('profile_id', aClient.id.toString() as string)
-        .expect(404, {
-          title: 'Entity not found',
-          status: 404,
-          detail: `Contract with id ${aContract.id} not found for requesting user`,
-        });
+      const response = await dsl.contracts.getContractById(aContract.id, {
+        profileId: aClient.id,
+      });
+
+      // Assert
+      assert.equal(response.status, 404);
+      assert.deepEqual(response.body, {
+        title: 'Entity not found',
+        status: 404,
+        detail: `Contract with id ${aContract.id} not found for requesting user`,
+      });
     });
     test('Returns a 400 error when the contract id is not a positive number', async () => {
       // Arrange
