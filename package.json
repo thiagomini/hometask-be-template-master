@@ -12,7 +12,7 @@
   "scripts": {
     "start": "nodemon ./dist/server.js",
     "start:dev": "tsx watch ./src/server.ts",
-    "seed": "node ./scripts/seedDb.js",
+    "seed": "tsx ./scripts/seedDb.ts",
     "prebuild": "rimraf ./dist",
     "build": "tsc -p ./tsconfig.build.json",
     "format:check": "prettier --check ./src/**/*.ts",

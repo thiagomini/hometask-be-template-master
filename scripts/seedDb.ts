@@ -1,7 +1,7 @@
-import { Profile, Contract, Job } from '../src/model.js';
+import { Contract, Job, Profile } from '../src/model.js';
 
 /* WARNING THIS WILL DROP THE CURRENT DATABASE */
-seed();
+await seed();
 
 async function seed() {
   // create tables

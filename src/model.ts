@@ -1,11 +1,11 @@
 import Sequelize from 'sequelize';
 
-const sequelize = new Sequelize.Sequelize({
+export const sequelize = new Sequelize.Sequelize({
   dialect: 'sqlite',
   storage: './database.sqlite3',
 });
 
-class Profile extends Sequelize.Model {}
+export class Profile extends Sequelize.Model {}
 Profile.init(
   {
     firstName: {
@@ -30,10 +30,10 @@ Profile.init(
   {
     sequelize,
     modelName: 'Profile',
-  }
+  },
 );
 
-class Contract extends Sequelize.Model {}
+export class Contract extends Sequelize.Model {}
 Contract.init(
   {
     terms: {
@@ -47,10 +47,10 @@ Contract.init(
   {
     sequelize,
     modelName: 'Contract',
-  }
+  },
 );
 
-class Job extends Sequelize.Model {}
+export class Job extends Sequelize.Model {}
 Job.init(
   {
     description: {
@@ -81,10 +81,3 @@ Profile.hasMany(Contract, { as: 'Client', foreignKey: 'ClientId' });
 Contract.belongsTo(Profile, { as: 'Client' });
 Contract.hasMany(Job);
 Job.belongsTo(Contract);
-
-export default {
-  sequelize,
-  Profile,
-  Contract,
-  Job,
-};

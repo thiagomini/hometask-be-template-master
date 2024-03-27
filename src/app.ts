@@ -2,11 +2,11 @@ import bodyParser from 'body-parser';
 import express from 'express';
 
 import { getProfile } from './middleware/getProfile.js';
-import model from './model.js';
+import { sequelize } from './model.js';
 const app = express();
 app.use(bodyParser.json());
-app.set('sequelize', model.sequelize);
-app.set('models', model.sequelize.models);
+app.set('sequelize', sequelize);
+app.set('models', sequelize.models);
 
 /**
  * FIX ME!

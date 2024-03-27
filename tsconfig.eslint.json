@@ -1,6 +1,7 @@
 {
   "extends": "./tsconfig.common.json",
   "include": [
-    "src/**/*",
+    "src/**/*.ts",
+    "scripts/**/*.ts"
   ],
 }
