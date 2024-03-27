@@ -2,10 +2,10 @@
   "extends": "./tsconfig.common.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "declaration": true,
-    "declarationMap": true
+    "declaration": false,
   },
   "include": [
     "src/**/*",
+    "types/**/*"
   ]
 }

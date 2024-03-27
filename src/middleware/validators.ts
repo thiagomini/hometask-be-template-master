@@ -1,6 +1,6 @@
 import { type NextFunction, type Request, type Response } from 'express';
 
-import { badRequest } from '../errors';
+import { badRequest } from '../errors.js';
 
 export function validateParamId(
   req: Request,
