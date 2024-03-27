@@ -25,7 +25,15 @@ app.get('/contracts/:id', getProfile, async (req, res) => {
       },
     },
   });
-  if (!contract) return res.status(404).end();
+  if (!contract)
+    return res
+      .status(404)
+      .json({
+        detail: `Contract with id ${id} not found for requesting user`,
+        title: 'Entity not found',
+        status: 404,
+      })
+      .end();
   res.json(contract);
 });
 

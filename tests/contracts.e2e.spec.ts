@@ -64,7 +64,11 @@ describe('Contracts', () => {
       await request(app as Application)
         .get(`/contracts/${aContract.id}`)
         .set('profile_id', aClient.id.toString() as string)
-        .expect(404);
+        .expect(404, {
+          title: 'Entity not found',
+          status: 404,
+          detail: `Contract with id ${aContract.id} not found for requesting user`,
+        });
     });
   });
 
