@@ -3,6 +3,7 @@ import test, { before, describe } from 'node:test';
 
 import { createDSL } from './dsl/dsl.factory.js';
 import { initializeFactories } from './factories/init.js';
+import { profileFactory } from './factories/profile.factory.js';
 import app from '../src/app.js';
 
 describe('Jobs E2E', () => {
@@ -16,7 +17,14 @@ describe('Jobs E2E', () => {
     test('Returns 401 when the user is not authenticated', async () => {
       await dsl.jobs.getUnpaidJobs().expect(401);
     });
-    test.todo('Returns an empty list when the user has no jobs');
+    test('Returns an empty list when the user has no jobs', async () => {
+      const aClient = await profileFactory.create();
+      await dsl.jobs
+        .getUnpaidJobs({
+          profileId: aClient.id,
+        })
+        .expect(200, []);
+    });
     test.todo(
       'Returns the list of unpaid active jobs belonging to the requesting client',
     );

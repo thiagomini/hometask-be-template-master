@@ -60,6 +60,8 @@ app.get('/contracts', getProfile, async (req, res) => {
   res.json(contracts);
 });
 
-app.get('/jobs/unpaid', getProfile, async (req, res) => {});
+app.get('/jobs/unpaid', getProfile, async (req, res) => {
+  return res.json([]);
+});
 
 export default app;
