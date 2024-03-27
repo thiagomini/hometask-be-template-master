@@ -80,33 +80,38 @@ app.get('/jobs/unpaid', getProfile, async (req, res) => {
   return res.json(jobs);
 });
 
-app.post('/jobs/:jobId/pay', getProfile, async (req, res) => {
-  const { Job, Contract } = req.app.get('models');
-  const { jobId } = req.params;
+app.post(
+  '/jobs/:id/pay',
+  getProfile,
+  validateParamId('Job'),
+  async (req, res) => {
+    const { Job, Contract } = req.app.get('models');
+    const { id: jobId } = req.params;
 
-  const job = await Job.findOne({
-    where: {
-      id: jobId,
-      '$Contract.clientId$': req.profile.id,
-    },
-    include: {
-      model: Contract,
-      as: 'Contract',
-      attributes: [],
-    },
-  });
+    const job = await Job.findOne({
+      where: {
+        id: jobId,
+        '$Contract.clientId$': req.profile.id,
+      },
+      include: {
+        model: Contract,
+        as: 'Contract',
+        attributes: [],
+      },
+    });
 
-  if (!job)
-    return res
-      .status(404)
-      .json(
-        notFound({
-          detail: `Job with id ${jobId} not found for requesting user`,
-        }),
-      )
-      .end();
+    if (!job)
+      return res
+        .status(404)
+        .json(
+          notFound({
+            detail: `Job with id ${jobId} not found for requesting user`,
+          }),
+        )
+        .end();
 
-  return res.status(200).json({});
-});
+    return res.status(200).json({});
+  },
+);
 
 export default app;

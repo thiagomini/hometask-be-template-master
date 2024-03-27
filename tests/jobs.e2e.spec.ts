@@ -178,7 +178,21 @@ describe('Jobs E2E', () => {
           status: 404,
         });
     });
-    test.todo('Returns 400 when the job id is not a positive number');
+    test('Returns 400 when the job id is not a positive number', async () => {
+      // Arrange
+      const aClient = await clientFactory.create();
+
+      // Act
+      await dsl.jobs
+        .payJob(0, {
+          profileId: aClient.id,
+        })
+        .expect(400, {
+          detail: 'Job id must be a positive integer',
+          title: 'Bad Request',
+          status: 400,
+        });
+    });
     test.todo('Returns 400 when the job is already paid');
     test.todo('Returns 400 when the client does not have enough funds');
     test.todo('Returns 200 when the job is successfully paid');
