@@ -142,7 +142,21 @@ describe('Jobs E2E', () => {
     test('Returns 401 when the user is not authenticated', async () => {
       await dsl.jobs.payJob(1).expect(401);
     });
-    test.todo('Returns 404 when the job does not exist');
+    test('Returns 404 when the job does not exist', async () => {
+      // Arrange
+      const aClient = await clientFactory.create();
+
+      // Act
+      await dsl.jobs
+        .payJob(999999, {
+          profileId: aClient.id,
+        })
+        .expect(404, {
+          detail: 'Job with id 999999 not found for requesting user',
+          title: 'Entity not found',
+          status: 404,
+        });
+    });
     test.todo('Returns 404 when the job does not belong to the client');
     test.todo('Returns 400 when the job id is not a positive number');
     test.todo('Returns 400 when the job is already paid');

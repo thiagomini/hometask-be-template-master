@@ -81,7 +81,24 @@ app.get('/jobs/unpaid', getProfile, async (req, res) => {
 });
 
 app.post('/jobs/:jobId/pay', getProfile, async (req, res) => {
-  res.json({});
+  const { Job } = req.app.get('models');
+  const { jobId } = req.params;
+
+  const job = await Job.findOne({
+    where: {
+      id: jobId,
+    },
+  });
+
+  if (!job)
+    return res
+      .status(404)
+      .json(
+        notFound({
+          detail: `Job with id ${jobId} not found for requesting user`,
+        }),
+      )
+      .end();
 });
 
 export default app;
