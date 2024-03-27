@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
+import assert from 'node:assert/strict';
 import test, { before, describe } from 'node:test';
 
 import { createDSL } from './dsl/dsl.factory.js';
@@ -81,6 +82,34 @@ describe('Balances E2E', () => {
           status: 409,
         });
     });
-    test.todo('Returns the updated balance of the client with the given id');
+    test('Returns the updated balance of the client with the given id', async () => {
+      // Arrange
+      const aClient = await clientFactory.create({
+        balance: 100,
+      });
+      const aContractor = await contractorFactory.create();
+      const aContract = await contractFactory.create({
+        clientId: aClient.id,
+        contractorId: aContractor.id,
+        status: 'in_progress',
+      });
+      await unpaidJobFactory.create({
+        contractId: aContract.id,
+        price: 125,
+      });
+
+      // Act
+      await dsl.balances
+        .deposit({
+          amount: 25,
+          userId: aClient.id,
+        })
+        .expect(200, {
+          newBalance: 125,
+        });
+
+      await aClient.reload();
+      assert.equal(aClient.balance, 125);
+    });
   });
 });
