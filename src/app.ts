@@ -166,14 +166,24 @@ app.post(
     const { Profile } = req.app.get('models');
     const { id } = req.params;
 
-    const client = await Profile.findByPk(id);
+    const user = await Profile.findByPk(id);
 
-    if (!client)
+    if (!user)
       return res.status(404).json(
         notFound({
           detail: `Client with id ${id} not found`,
         }),
       );
+
+    if (user.type !== 'client') {
+      return res.status(400).json(
+        httpError({
+          status: 400,
+          title: 'Bad Request',
+          detail: 'Only clients can deposit funds',
+        }),
+      );
+    }
 
     return res.status(200).json({});
   },

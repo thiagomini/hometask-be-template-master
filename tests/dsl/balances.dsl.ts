@@ -7,10 +7,8 @@ export type BalanceOptions = RequestOptions;
 
 export function balances(app: Express) {
   return Object.freeze({
-    deposit: (amount: number, options: RequestOptions) => {
-      return request(app)
-        .post(`/balances/deposit/${options.profileId}`)
-        .send({ amount });
+    deposit: ({ amount, userId }: { amount: number; userId: number }) => {
+      return request(app).post(`/balances/deposit/${userId}`).send({ amount });
     },
   });
 }
