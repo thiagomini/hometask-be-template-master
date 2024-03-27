@@ -20,3 +20,7 @@ export function notFound(options: { detail: string }) {
 export function badRequest(options: { detail: string }) {
   return httpError({ status: 400, title: 'Bad Request', ...options });
 }
+
+export function conflict(options: { detail: string }) {
+  return httpError({ status: 409, title: 'Conflict', ...options });
+}

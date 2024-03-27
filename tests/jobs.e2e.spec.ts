@@ -193,7 +193,27 @@ describe('Jobs E2E', () => {
           status: 400,
         });
     });
-    test.todo('Returns 400 when the job is already paid');
+    test('Returns 409 when the job is already paid', async () => {
+      // Arrange
+      const aClient = await clientFactory.create();
+      const aContract = await contractFactory.create({
+        clientId: aClient.id,
+      });
+      const aJob = await paidJobFactory.create({
+        contractId: aContract.id,
+      });
+
+      // Act
+      await dsl.jobs
+        .payJob(aJob.id, {
+          profileId: aClient.id,
+        })
+        .expect(409, {
+          detail: `Job with id ${aJob.id} is already paid`,
+          title: 'Conflict',
+          status: 409,
+        });
+    });
     test.todo('Returns 400 when the client does not have enough funds');
     test.todo('Returns 200 when the job is successfully paid');
   });

@@ -2,7 +2,7 @@ import bodyParser from 'body-parser';
 import express from 'express';
 import { Op } from 'sequelize';
 
-import { httpError, notFound } from './errors.js';
+import { conflict, httpError, notFound } from './errors.js';
 import { getProfile } from './middleware/getProfile.js';
 import { validateParamId } from './middleware/validators.js';
 import { sequelize } from './model.js';
@@ -109,6 +109,14 @@ app.post(
           }),
         )
         .end();
+
+    if (job.paid) {
+      return res.status(409).json(
+        conflict({
+          detail: `Job with id ${jobId} is already paid`,
+        }),
+      );
+    }
 
     return res.status(200).json({});
   },
