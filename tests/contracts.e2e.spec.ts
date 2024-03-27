@@ -110,6 +110,38 @@ describe('Contracts', () => {
     });
     test.todo(
       'Returns a list of non-terminated contracts belonging to the requesting user',
+      async () => {
+        // Arrange
+        const aClient = await createProfile();
+        const [aContract, _terminatedContract] = await Promise.all([
+          createContract({
+            terms: 'Some terms',
+            status: 'new',
+            clientId: aClient.id,
+          }),
+          createContract({
+            terms: 'Some terms',
+            status: 'terminated',
+            clientId: aClient.id,
+          }),
+        ]);
+
+        // Act
+        await request(app as Application)
+          .get('/contracts')
+          .set('profile_id', aClient.id.toString() as string)
+          .expect(200, [
+            {
+              id: aContract.id,
+              terms: 'Some terms',
+              status: 'new',
+              createdAt: aContract.createdAt.toISOString(),
+              updatedAt: aContract.updatedAt.toISOString(),
+              clientId: aClient.id,
+              contractorId: null,
+            },
+          ]);
+      },
     );
     test.todo('Returns an empty list if the user has no contracts');
 

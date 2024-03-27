@@ -38,8 +38,20 @@ app.get('/contracts/:id', getProfile, async (req, res) => {
   res.json(contract);
 });
 
-app.get('/contracts', getProfile, (req, res) => {
-  return res.json([]);
+app.get('/contracts', getProfile, async (req, res) => {
+  const { Contract } = req.app.get('models');
+  const contracts = await Contract.findAll({
+    where: {
+      [Op.or]: {
+        clientId: req.profile.id,
+        contractorId: req.profile.id,
+      },
+      status: {
+        [Op.ne]: 'terminated',
+      },
+    },
+  });
+  res.json(contracts);
 });
 
 export default app;
