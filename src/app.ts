@@ -19,4 +19,5 @@ app.get('/contracts/:id', getProfile, async (req, res) => {
   if (!contract) return res.status(404).end();
   res.json(contract);
 });
+
 export default app;
