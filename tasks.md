@@ -2,8 +2,8 @@
 - [x] Add prettier to the project
 - [x] Add eslint to the project
 - [x] Change the package type to module
-- [] Create a basic example test using node's internal testing library
+- [x] Create a basic example test using node's internal testing library
 - [x] Add .node-version file and .nvmrc link
 - [x] Change the node version on package.json
-- [] Create "todo" e2e tests for each use case
-- [] Start implementing the API case by case
+- [x] Create "todo" e2e tests for each use case
+- [x] Start implementing the API case by case
