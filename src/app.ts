@@ -1,7 +1,8 @@
-import model from './model.js';
-import express from 'express';
 import bodyParser from 'body-parser';
+import express from 'express';
+
 import { getProfile } from './middleware/getProfile.js';
+import model from './model.js';
 const app = express();
 app.use(bodyParser.json());
 app.set('sequelize', model.sequelize);

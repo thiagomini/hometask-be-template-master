@@ -1,8 +1,6 @@
 import app from './app.js';
 
-init();
-
-async function init() {
+function init() {
   try {
     app.listen(3001, () => {
       console.log('Express App Listening on Port 3001');
@@ -12,3 +10,5 @@ async function init() {
     process.exit(1);
   }
 }
+
+init();
