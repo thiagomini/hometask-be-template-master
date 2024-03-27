@@ -26,7 +26,7 @@ export class Profile extends Sequelize.Model<
 Profile.init(
   {
     id: {
-      type: Sequelize.INTEGER.UNSIGNED,
+      type: Sequelize.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
@@ -72,7 +72,7 @@ export class Contract extends Sequelize.Model<
 Contract.init(
   {
     id: {
-      type: Sequelize.INTEGER.UNSIGNED,
+      type: Sequelize.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
