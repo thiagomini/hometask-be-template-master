@@ -2,6 +2,7 @@ import bodyParser from 'body-parser';
 import express from 'express';
 import { Op } from 'sequelize';
 
+import { notFound } from './errors.js';
 import { getProfile } from './middleware/getProfile.js';
 import { sequelize } from './model.js';
 const app = express();
@@ -28,11 +29,11 @@ app.get('/contracts/:id', getProfile, async (req, res) => {
   if (!contract)
     return res
       .status(404)
-      .json({
-        detail: `Contract with id ${id} not found for requesting user`,
-        title: 'Entity not found',
-        status: 404,
-      })
+      .json(
+        notFound({
+          detail: `Contract with id ${id} not found for requesting user`,
+        }),
+      )
       .end();
   res.json(contract);
 });
