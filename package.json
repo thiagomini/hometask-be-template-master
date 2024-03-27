@@ -18,7 +18,8 @@
     "format:check": "prettier --check ./src/**/*.ts",
     "format": "prettier --write ./src/**/*.ts",
     "lint:check": "eslint ./src/**/*.ts",
-    "lint": "eslint ./src/**/*.ts --fix"
+    "lint": "eslint ./src/**/*.ts --fix",
+    "test:e2e": "glob -d -c \"node --import tsx --test\" **/*.e2e.spec.ts"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
@@ -29,6 +30,7 @@
     "concurrently": "^8.0.1",
     "eslint": "^8.57.0",
     "eslint-plugin-import-x": "^0.4.4",
+    "glob": "^10.3.10",
     "nodemon": "^2.0.22",
     "prettier": "^3.2.5",
     "rimraf": "^5.0.5",
