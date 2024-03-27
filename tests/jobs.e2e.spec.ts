@@ -157,7 +157,27 @@ describe('Jobs E2E', () => {
           status: 404,
         });
     });
-    test.todo('Returns 404 when the job does not belong to the client');
+    test('Returns 404 when the job does not belong to the client', async () => {
+      // Arrange
+      const [aClient, anotherClient] = await clientFactory.createMany(2);
+      const aContract = await contractFactory.create({
+        clientId: anotherClient.id,
+      });
+      const aJob = await unpaidJobFactory.create({
+        contractId: aContract.id,
+      });
+
+      // Act
+      await dsl.jobs
+        .payJob(aJob.id, {
+          profileId: aClient.id,
+        })
+        .expect(404, {
+          detail: `Job with id ${aJob.id} not found for requesting user`,
+          title: 'Entity not found',
+          status: 404,
+        });
+    });
     test.todo('Returns 400 when the job id is not a positive number');
     test.todo('Returns 400 when the job is already paid');
     test.todo('Returns 400 when the client does not have enough funds');

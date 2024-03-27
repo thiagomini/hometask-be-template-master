@@ -81,12 +81,18 @@ app.get('/jobs/unpaid', getProfile, async (req, res) => {
 });
 
 app.post('/jobs/:jobId/pay', getProfile, async (req, res) => {
-  const { Job } = req.app.get('models');
+  const { Job, Contract } = req.app.get('models');
   const { jobId } = req.params;
 
   const job = await Job.findOne({
     where: {
       id: jobId,
+      '$Contract.clientId$': req.profile.id,
+    },
+    include: {
+      model: Contract,
+      as: 'Contract',
+      attributes: [],
     },
   });
 
@@ -99,6 +105,8 @@ app.post('/jobs/:jobId/pay', getProfile, async (req, res) => {
         }),
       )
       .end();
+
+  return res.status(200).json({});
 });
 
 export default app;
