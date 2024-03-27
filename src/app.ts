@@ -128,8 +128,10 @@ app.post(
       );
     }
 
+    const newBalance = req.profile.balance - job.price;
+
     return res.status(200).json({
-      newBalance: 50,
+      newBalance,
     });
   },
 );

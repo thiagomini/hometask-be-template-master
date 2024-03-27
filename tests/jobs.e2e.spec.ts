@@ -239,7 +239,7 @@ describe('Jobs E2E', () => {
           status: 400,
         });
     });
-    test('Returns 200 when the job is successfully paid', async () => {
+    test('Returns 200 and the new balance when the job is successfully paid', async () => {
       // Arrange
       const aClient = await clientFactory.create({
         balance: 100,
@@ -250,7 +250,7 @@ describe('Jobs E2E', () => {
       });
       const aJob = await unpaidJobFactory.create({
         contractId: aContract.id,
-        price: 50,
+        price: 70,
       });
 
       // Act
@@ -259,7 +259,7 @@ describe('Jobs E2E', () => {
           profileId: aClient.id,
         })
         .expect(200, {
-          newBalance: 50,
+          newBalance: 30,
         });
     });
   });
