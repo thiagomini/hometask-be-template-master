@@ -38,9 +38,19 @@ describe('Contracts', () => {
           contractorId: null,
         });
     });
-    test.todo(
+    test(
       'Returns a 404 error if the contract with the given id does not exist',
-    );
+    ),
+      async () => {
+        // Arrange
+        const aClient = await createProfile();
+
+        // Act
+        await request(app as Application)
+          .get('/contracts/999999')
+          .set('profile_id', aClient.id.toString() as string)
+          .expect(404);
+      };
   });
 
   describe('GET /contracts', () => {
