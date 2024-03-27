@@ -1,5 +1,6 @@
 import bodyParser from 'body-parser';
 import express from 'express';
+import { Op } from 'sequelize';
 
 import { getProfile } from './middleware/getProfile.js';
 import { sequelize } from './model.js';
@@ -15,7 +16,15 @@ app.set('models', sequelize.models);
 app.get('/contracts/:id', getProfile, async (req, res) => {
   const { Contract } = req.app.get('models');
   const { id } = req.params;
-  const contract = await Contract.findOne({ where: { id } });
+  const contract = await Contract.findOne({
+    where: {
+      id,
+      [Op.or]: {
+        clientId: req.profile.id,
+        contractorId: req.profile.id,
+      },
+    },
+  });
   if (!contract) return res.status(404).end();
   res.json(contract);
 });

@@ -38,19 +38,34 @@ describe('Contracts', () => {
           contractorId: null,
         });
     });
-    test(
-      'Returns a 404 error if the contract with the given id does not exist',
-    ),
-      async () => {
-        // Arrange
-        const aClient = await createProfile();
+    test('Returns a 404 error if the contract with the given id does not exist', async () => {
+      // Arrange
+      const aClient = await createProfile();
 
-        // Act
-        await request(app as Application)
-          .get('/contracts/999999')
-          .set('profile_id', aClient.id.toString() as string)
-          .expect(404);
-      };
+      // Act
+      await request(app as Application)
+        .get('/contracts/999999')
+        .set('profile_id', aClient.id.toString() as string)
+        .expect(404);
+    });
+    test('Returns a 404 error if the contract with the given id does not belong to the requesting user', async () => {
+      // Arrange
+      const [aClient, anotherClient] = await Promise.all([
+        createProfile(),
+        createProfile(),
+      ]);
+      const aContract = await createContract({
+        terms: 'Some terms',
+        status: 'new',
+        clientId: anotherClient.id,
+      });
+
+      // Act
+      await request(app as Application)
+        .get(`/contracts/${aContract.id}`)
+        .set('profile_id', aClient.id.toString() as string)
+        .expect(404);
+    });
   });
 
   describe('GET /contracts', () => {
