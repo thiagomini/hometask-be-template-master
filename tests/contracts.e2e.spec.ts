@@ -1,14 +1,21 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
-import test, { describe } from 'node:test';
+import test, { before, describe } from 'node:test';
 
 import { type InferCreationAttributes } from 'sequelize';
 
 import { createDSL } from './dsl/dsl.factory';
+import { contractFactory } from './factories/contract.factory';
+import { initializeFactories } from './factories/init';
+import { profileFactory } from './factories/profile.factory';
 import app from '../src/app';
-import { Contract, Profile } from '../src/model';
+import { type Contract, type Profile } from '../src/model';
 
 describe('Contracts', () => {
   const dsl = createDSL(app);
+
+  before(() => {
+    initializeFactories();
+  });
 
   describe('GET /contracts/:id', () => {
     test('Returns 401 when the user is not authenticated', async () => {
@@ -166,22 +173,11 @@ describe('Contracts', () => {
 async function createProfile(
   attributes: Partial<InferCreationAttributes<Profile>> = {},
 ): Promise<Profile> {
-  return await Profile.create({
-    firstName: 'John',
-    lastName: 'Doe',
-    profession: 'Software Engineer',
-    balance: 1000,
-    type: 'client',
-    ...attributes,
-  });
+  return await profileFactory.create(attributes);
 }
 
 async function createContract(
   attributes: Partial<InferCreationAttributes<Contract>> = {},
 ): Promise<Contract> {
-  return await Contract.create({
-    terms: 'Some terms',
-    status: 'new',
-    ...attributes,
-  });
+  return await contractFactory.create(attributes);
 }
