@@ -1,14 +1,12 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import test, { before, describe } from 'node:test';
 
-import { type InferCreationAttributes } from 'sequelize';
 
 import { createDSL } from './dsl/dsl.factory';
 import { contractFactory } from './factories/contract.factory';
 import { initializeFactories } from './factories/init';
 import { profileFactory } from './factories/profile.factory';
 import app from '../src/app';
-import { type Contract, type Profile } from '../src/model';
 
 describe('Contracts', () => {
   const dsl = createDSL(app);
@@ -23,8 +21,8 @@ describe('Contracts', () => {
     });
     test('Returns the contract with the given id belonging to the requesting client', async () => {
       // Arrange
-      const aClient = await createProfile();
-      const aContract = await createContract({
+      const aClient = await profileFactory.create();
+      const aContract = await contractFactory.create({
         terms: 'Some terms',
         status: 'new',
         clientId: aClient.id,
@@ -47,10 +45,10 @@ describe('Contracts', () => {
     });
     test('Returns the contract with the given id belonging to the requesting contractor', async () => {
       // Arrange
-      const aContractor = await createProfile({
+      const aContractor = await profileFactory.create({
         type: 'contractor',
       });
-      const aContract = await createContract({
+      const aContract = await contractFactory.create({
         terms: 'Some terms',
         status: 'new',
         contractorId: aContractor.id,
@@ -73,7 +71,7 @@ describe('Contracts', () => {
     });
     test('Returns a 404 error if the contract with the given id does not exist', async () => {
       // Arrange
-      const aClient = await createProfile();
+      const aClient = await profileFactory.create();
 
       // Act
       await dsl.contracts
@@ -89,10 +87,10 @@ describe('Contracts', () => {
     test('Returns a 404 error if the contract with the given id does not belong to the requesting user', async () => {
       // Arrange
       const [aClient, anotherClient] = await Promise.all([
-        createProfile(),
-        createProfile(),
+        profileFactory.create(),
+        profileFactory.create(),
       ]);
-      const aContract = await createContract({
+      const aContract = await contractFactory.create({
         terms: 'Some terms',
         status: 'new',
         clientId: anotherClient.id,
@@ -111,7 +109,7 @@ describe('Contracts', () => {
     });
     test('Returns a 400 error when the contract id is not a positive number', async () => {
       // Arrange
-      const aClient = await createProfile();
+      const aClient = await profileFactory.create();
 
       // Act
       await dsl.contracts
@@ -129,26 +127,29 @@ describe('Contracts', () => {
   describe('GET /contracts', () => {
     test('Returns an empty list if the user has no contracts', async () => {
       // Arrange
-      const aClient = await createProfile();
+      const aClient = await profileFactory.create();
 
       // Act
       await dsl.contracts.list({ profileId: aClient.id }).expect(200, []);
     });
     test('Returns a list of non-terminated contracts belonging to the requesting user', async () => {
       // Arrange
-      const aClient = await createProfile();
-      const [aContract, _terminatedContract] = await Promise.all([
-        createContract({
-          terms: 'Some terms',
-          status: 'new',
-          clientId: aClient.id,
-        }),
-        createContract({
-          terms: 'Some terms',
-          status: 'terminated',
-          clientId: aClient.id,
-        }),
-      ]);
+      const aClient = await profileFactory.create();
+      const [aContract, _terminatedContract] = await contractFactory.createMany(
+        2,
+        [
+          {
+            terms: 'Some terms',
+            status: 'new',
+            clientId: aClient.id,
+          },
+          {
+            terms: 'Some terms',
+            status: 'terminated',
+            clientId: aClient.id,
+          },
+        ],
+      );
 
       // Act
       await dsl.contracts.list({ profileId: aClient.id }).expect(200, [
@@ -169,15 +170,3 @@ describe('Contracts', () => {
     });
   });
 });
-
-async function createProfile(
-  attributes: Partial<InferCreationAttributes<Profile>> = {},
-): Promise<Profile> {
-  return await profileFactory.create(attributes);
-}
-
-async function createContract(
-  attributes: Partial<InferCreationAttributes<Contract>> = {},
-): Promise<Contract> {
-  return await contractFactory.create(attributes);
-}
