@@ -5,7 +5,11 @@ import test, { before, describe } from 'node:test';
 import { createDSL } from './dsl/dsl.factory.js';
 import { contractFactory } from './factories/contract.factory.js';
 import { initializeFactories } from './factories/init.js';
-import { profileFactory } from './factories/profile.factory.js';
+import {
+  clientFactory,
+  contractorFactory,
+  profileFactory,
+} from './factories/profile.factory.js';
 import app from '../src/app.js';
 
 describe('Contracts E2E', () => {
@@ -21,7 +25,7 @@ describe('Contracts E2E', () => {
     });
     test('Returns the contract with the given id belonging to the requesting client', async () => {
       // Arrange
-      const aClient = await profileFactory.create();
+      const aClient = await clientFactory.create();
       const aContract = await contractFactory.create({
         terms: 'Some terms',
         status: 'new',
@@ -45,9 +49,7 @@ describe('Contracts E2E', () => {
     });
     test('Returns the contract with the given id belonging to the requesting contractor', async () => {
       // Arrange
-      const aContractor = await profileFactory.create({
-        type: 'contractor',
-      });
+      const aContractor = await contractorFactory.create();
       const aContract = await contractFactory.create({
         terms: 'Some terms',
         status: 'new',
@@ -71,7 +73,7 @@ describe('Contracts E2E', () => {
     });
     test.skip('Returns a 404 error if the contract with the given id does not exist', async () => {
       // Arrange
-      const aClient = await profileFactory.create();
+      const aClient = await clientFactory.create();
 
       // Act
       await dsl.contracts
@@ -109,7 +111,7 @@ describe('Contracts E2E', () => {
     });
     test('Returns a 400 error when the contract id is not a positive number', async () => {
       // Arrange
-      const aClient = await profileFactory.create();
+      const aClient = await clientFactory.create();
 
       // Act
       await dsl.contracts
@@ -127,14 +129,14 @@ describe('Contracts E2E', () => {
   describe('GET /contracts', () => {
     test('Returns an empty list if the user has no contracts', async () => {
       // Arrange
-      const aClient = await profileFactory.create();
+      const aClient = await clientFactory.create();
 
       // Act
       await dsl.contracts.list({ profileId: aClient.id }).expect(200, []);
     });
     test('Returns a list of non-terminated contracts belonging to the requesting user', async () => {
       // Arrange
-      const aClient = await profileFactory.create();
+      const aClient = await clientFactory.create();
       const [aContract, _terminatedContract] = await contractFactory.createMany(
         2,
         [

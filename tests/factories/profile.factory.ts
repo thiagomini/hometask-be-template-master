@@ -12,3 +12,11 @@ export const profileFactory = FactoryGirl.define(Profile, () => ({
   createdAt: faker.date.past(),
   updatedAt: faker.date.recent(),
 }));
+
+export const clientFactory = profileFactory.extend(() => ({
+  type: 'client',
+}));
+
+export const contractorFactory = profileFactory.extend(() => ({
+  type: 'contractor',
+}));

@@ -5,11 +5,14 @@ import { createDSL } from './dsl/dsl.factory.js';
 import { contractFactory } from './factories/contract.factory.js';
 import { initializeFactories } from './factories/init.js';
 import {
-  jobsFactory,
   paidJobFactory,
-  unpaidJobFactory,
+  unpaidJobFactory
 } from './factories/jobs.factory.js';
-import { profileFactory } from './factories/profile.factory.js';
+import {
+  clientFactory,
+  contractorFactory,
+  profileFactory,
+} from './factories/profile.factory.js';
 import app from '../src/app.js';
 
 describe('Jobs E2E', () => {
@@ -32,15 +35,12 @@ describe('Jobs E2E', () => {
         .expect(200, []);
     });
     test('Returns an empty list when the user has no UNPAID jobs', async () => {
-      const aClient = await profileFactory.create({
-        type: 'client',
-      });
+      const aClient = await clientFactory.create();
       const aContract = await contractFactory.create({
         clientId: aClient.id,
       });
-      await jobsFactory.create({
+      await paidJobFactory.create({
         contractId: aContract.id,
-        paid: true,
       });
 
       await dsl.jobs
@@ -50,13 +50,17 @@ describe('Jobs E2E', () => {
         .expect(200, []);
     });
     test('Returns the list of unpaid active jobs belonging to the requesting client', async () => {
-      const aClient = await profileFactory.create();
+      const aClient = await clientFactory.create();
       const aContract = await contractFactory.create({
         clientId: aClient.id,
       });
-      const [_paidJob, unpaidJob] = await jobsFactory.createMany(2, [
-        { contractId: aContract.id, paid: true },
-        { contractId: aContract.id, paid: false },
+      const [_paidJob, unpaidJob] = await Promise.all([
+        paidJobFactory.create({
+          contractId: aContract.id,
+        }),
+        unpaidJobFactory.create({
+          contractId: aContract.id,
+        }),
       ]);
 
       await dsl.jobs
@@ -68,8 +72,8 @@ describe('Jobs E2E', () => {
             id: unpaidJob.id,
             description: unpaidJob.description,
             price: unpaidJob.price,
-            paid: unpaidJob.paid,
-            paymentDate: unpaidJob.paymentDate,
+            paid: false,
+            paymentDate: null,
             createdAt: unpaidJob.createdAt.toISOString(),
             updatedAt: unpaidJob.updatedAt.toISOString(),
             contractId: unpaidJob.contractId,
@@ -78,9 +82,7 @@ describe('Jobs E2E', () => {
     });
 
     test('Returns the list of unpaid active jobs belonging to the requesting contractor', async () => {
-      const aContractor = await profileFactory.create({
-        type: 'contractor',
-      });
+      const aContractor = await contractorFactory.create();
       const aContract = await contractFactory.create({
         contractorId: aContractor.id,
       });
