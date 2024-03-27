@@ -15,7 +15,7 @@ describe('Contracts', () => {
         .get('/contracts/1')
         .expect(401);
     });
-    test('Returns the contract with the given id belonging to the requesting user', async () => {
+    test('Returns the contract with the given id belonging to the requesting client', async () => {
       // Arrange
       const aClient = await createProfile();
       const aContract = await createContract({
@@ -36,6 +36,31 @@ describe('Contracts', () => {
           updatedAt: aContract.updatedAt.toISOString(),
           clientId: aClient.id,
           contractorId: null,
+        });
+    });
+    test('Returns the contract with the given id belonging to the requesting contractor', async () => {
+      // Arrange
+      const aContractor = await createProfile({
+        type: 'contractor',
+      });
+      const aContract = await createContract({
+        terms: 'Some terms',
+        status: 'new',
+        contractorId: aContractor.id,
+      });
+
+      // Act
+      await request(app as Application)
+        .get(`/contracts/${aContract.id}`)
+        .set('profile_id', aContractor.id.toString() as string)
+        .expect(200, {
+          id: aContract.id,
+          terms: 'Some terms',
+          status: 'new',
+          createdAt: aContract.createdAt.toISOString(),
+          updatedAt: aContract.updatedAt.toISOString(),
+          contractorId: aContractor.id,
+          clientId: null,
         });
     });
     test('Returns a 404 error if the contract with the given id does not exist', async () => {
