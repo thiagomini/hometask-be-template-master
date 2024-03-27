@@ -118,6 +118,16 @@ app.post(
       );
     }
 
+    if (req.profile.balance < job.price) {
+      return res.status(400).json(
+        httpError({
+          status: 400,
+          title: 'Bad Request',
+          detail: 'Insufficient funds',
+        }),
+      );
+    }
+
     return res.status(200).json({});
   },
 );

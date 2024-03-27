@@ -214,7 +214,31 @@ describe('Jobs E2E', () => {
           status: 409,
         });
     });
-    test.todo('Returns 400 when the client does not have enough funds');
+    test('Returns 400 when the client does not have enough funds', async () => {
+      // Arrange
+      const aClient = await clientFactory.create({
+        balance: 10,
+      });
+      const aContract = await contractFactory.create({
+        clientId: aClient.id,
+        status: 'in_progress',
+      });
+      const aJob = await unpaidJobFactory.create({
+        contractId: aContract.id,
+        price: 11,
+      });
+
+      // Act
+      await dsl.jobs
+        .payJob(aJob.id, {
+          profileId: aClient.id,
+        })
+        .expect(400, {
+          detail: 'Insufficient funds',
+          title: 'Bad Request',
+          status: 400,
+        });
+    });
     test.todo('Returns 200 when the job is successfully paid');
   });
 });
