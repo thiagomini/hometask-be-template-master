@@ -1,3 +1,10 @@
+export type HttpErrorResponse = {
+  status: number;
+  title?: string;
+  detail?: string;
+  errors?: unknown[];
+};
+
 /**
  * Returns an http error object following [RFC9457](https://www.rfc-editor.org/rfc/rfc9457.html#name-type) standard
  */
@@ -6,7 +13,7 @@ export function httpError(options: {
   title?: string;
   detail?: string;
   errors?: unknown[];
-}) {
+}): HttpErrorResponse {
   return {
     status: options.status,
     title: options.title,

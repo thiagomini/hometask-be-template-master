@@ -2,7 +2,7 @@ import { QueryTypes, type Sequelize } from 'sequelize';
 import { z } from 'zod';
 
 import { type ExpressHandler } from '../controllers/handler.type.js';
-import { badRequest } from '../errors.js';
+import { type HttpErrorResponse, badRequest } from '../errors.js';
 
 export type PayingClient = {
   id: number;
@@ -10,9 +10,7 @@ export type PayingClient = {
   totalPaid: number;
 };
 
-export type FindBestClientsResponse =
-  | PayingClient[]
-  | { detail?: string; errors?: unknown[]; title?: string };
+export type FindBestClientsResponse = PayingClient[] | HttpErrorResponse;
 
 export type FindBestClientsQuery = {
   start: string;

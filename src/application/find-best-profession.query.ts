@@ -2,11 +2,9 @@ import { Op, type Sequelize } from 'sequelize';
 import { type ZodError, z } from 'zod';
 
 import { type ExpressHandler } from '../controllers/handler.type.js';
-import { badRequest } from '../errors.js';
+import { type HttpErrorResponse, badRequest } from '../errors.js';
 
-export type FindBestProfessionResponse =
-  | { profession: string }
-  | { detail?: string; errors?: unknown[]; title?: string };
+export type FindBestProfessionResponse = { profession: string } | HttpErrorResponse;
 
 export type FindBestProfessionQuery = {
   start: string;
