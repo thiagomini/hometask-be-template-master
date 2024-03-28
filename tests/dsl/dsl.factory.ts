@@ -1,5 +1,6 @@
 import { type Express } from 'express';
 
+import { admin } from './admin.dsl.js';
 import { balances } from './balances.dsl.js';
 import { contracts } from './contracts.dsl.js';
 import { jobs } from './jobs.dsl.js';
@@ -14,5 +15,6 @@ export function createDSL(app: Express) {
     contracts: contracts(app),
     jobs: jobs(app),
     balances: balances(app),
+    admin: admin(app),
   });
 }

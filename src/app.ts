@@ -1,6 +1,7 @@
 import bodyParser from 'body-parser';
 import express from 'express';
 import { Op } from 'sequelize';
+import { z } from 'zod';
 
 import { conflict, httpError, notFound } from './errors.js';
 import { getProfile } from './middleware/getProfile.js';
@@ -132,26 +133,26 @@ app.post(
 
     const newBalance = profile.balance - job.price;
 
-   await sequelize.transaction(async (t) => {
-     await profile.update(
-       {
-         balance: newBalance,
-       },
-       {
-         transaction: t,
-       },
-     );
+    await sequelize.transaction(async (t) => {
+      await profile.update(
+        {
+          balance: newBalance,
+        },
+        {
+          transaction: t,
+        },
+      );
 
-     await job.update(
-       {
-         paid: true,
-         paymentDate: new Date(),
-       },
-       {
-         transaction: t,
-       },
-     );
-   });
+      await job.update(
+        {
+          paid: true,
+          paymentDate: new Date(),
+        },
+        {
+          transaction: t,
+        },
+      );
+    });
 
     return res.status(200).json({
       newBalance,
@@ -219,5 +220,22 @@ app.post(
     });
   },
 );
+
+app.get('/admin/best-profession', async (req, res) => {
+  const schema = z.object({
+    start: z.date(),
+    end: z.date(),
+  });
+
+  const { data, error } = schema.safeParse(req.query);
+  if (error) {
+    return res.status(400).json({
+      title: 'Your request is not valid',
+      errors: error.errors,
+    });
+  }
+
+  res.json({});
+});
 
 export default app;
