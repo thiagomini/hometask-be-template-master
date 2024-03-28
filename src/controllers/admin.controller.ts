@@ -1,65 +1,12 @@
 import { type Express, type RequestHandler } from 'express';
-import { Op, QueryTypes, type Sequelize } from 'sequelize';
+import { QueryTypes } from 'sequelize';
 import { z } from 'zod';
 
-import { badRequest } from '../errors';
+import { findBestProfession } from '../application/find-best-profession.query.js';
+import { badRequest } from '../errors.js';
+
 export function registerAdminRoutes(app: Express) {
-  app.get('/admin/best-profession', (async (req, res) => {
-    const schema = z
-      .object({
-        start: z.date(),
-        end: z.date(),
-      })
-      .refine((data) => data.start < data.end, {
-        message: 'End date must be greater than start date',
-        path: ['start'],
-      });
-
-    const { data, error } = schema.safeParse({
-      start: new Date(req.query.start),
-      end: new Date(req.query.end),
-    });
-    if (error) {
-      return res.status(400).json(
-        badRequest({
-          detail: 'Your request data is invalid',
-          errors: error.errors,
-        }),
-      );
-    }
-
-    const { Contract, Job, Profile } = req.app.get('models');
-    const { start, end } = data;
-    const sequelize: Sequelize = req.app.get('sequelize');
-
-    const [jobThatEarnedTheMost] = await Job.findAll({
-      where: {
-        paymentDate: {
-          [Op.between]: [start, end],
-        },
-        paid: true,
-      },
-      attributes: [[sequelize.fn('sum', sequelize.col('price')), 'total']],
-      include: [
-        {
-          model: Contract,
-          required: true,
-          include: {
-            model: Profile,
-            as: 'contractor',
-            required: true,
-          },
-        },
-      ],
-      group: [sequelize.col('Contract.contractor.profession')],
-      order: [[sequelize.literal('total'), 'DESC']],
-      limit: 1,
-    });
-
-    res.status(200).json({
-      profession: jobThatEarnedTheMost.Contract.contractor.profession,
-    });
-  }) as RequestHandler);
+  app.get('/admin/best-profession', findBestProfession as RequestHandler);
 
   app.get('/admin/best-clients', (async (req, res) => {
     const schema = z
@@ -73,17 +20,17 @@ export function registerAdminRoutes(app: Express) {
         path: ['start'],
       });
 
-    const { data, error } = schema.safeParse({
+    const result = schema.safeParse({
       start: new Date(req.query.start),
       end: new Date(req.query.end),
       limit: Number(req.query.limit),
     });
 
-    if (error) {
+    if (!result.success) {
       return res.status(400).json(
         badRequest({
           detail: 'Your request data is invalid',
-          errors: error.errors,
+          errors: result.error.errors,
         }),
       );
     }
@@ -104,7 +51,11 @@ export function registerAdminRoutes(app: Express) {
       LIMIT ?
     `,
       {
-        replacements: [data.start, data.end, data.limit ?? 2],
+        replacements: [
+          result.data.start,
+          result.data.end,
+          result.data.limit ?? 2,
+        ],
         type: QueryTypes.SELECT,
       },
     );
