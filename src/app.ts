@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import { Op, QueryTypes } from 'sequelize';
 import { z } from 'zod';
 
+import { registerContractRoutes } from './controllers/contracts.controller.js';
 import { badRequest, conflict, httpError, notFound } from './errors.js';
 import { getProfile } from './middleware/getProfile.js';
 import { validateParamId } from './middleware/validators.js';
@@ -14,54 +15,7 @@ app.use(helmet());
 app.set('sequelize', sequelize);
 app.set('models', sequelize.models);
 
-/**
- * FIX ME!
- * @returns contract by id
- */
-app.get(
-  '/contracts/:id',
-  getProfile,
-  validateParamId('Contract'),
-  async (req, res) => {
-    const { Contract } = req.app.get('models');
-    const { id } = req.params;
-    const contract = await Contract.findOne({
-      where: {
-        id,
-        [Op.or]: {
-          clientId: req.profile.id,
-          contractorId: req.profile.id,
-        },
-      },
-    });
-    if (!contract)
-      return res
-        .status(404)
-        .json(
-          notFound({
-            detail: `Contract with id ${id} not found for requesting user`,
-          }),
-        )
-        .end();
-    return res.json(contract);
-  },
-);
-
-app.get('/contracts', getProfile, async (req, res) => {
-  const { Contract } = req.app.get('models');
-  const contracts = await Contract.findAll({
-    where: {
-      [Op.or]: {
-        clientId: req.profile.id,
-        contractorId: req.profile.id,
-      },
-      status: {
-        [Op.ne]: 'terminated',
-      },
-    },
-  });
-  res.json(contracts);
-});
+registerContractRoutes(app);
 
 app.get('/jobs/unpaid', getProfile, async (req, res) => {
   const { Job, Contract } = req.app.get('models');
