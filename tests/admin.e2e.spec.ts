@@ -174,7 +174,26 @@ describe('Admin E2E', { timeout: 1000 }, () => {
           ],
         });
     });
-    test.todo('Returns 400 when the start date is greater than the end date');
+    test('Returns 400 when the start date is greater than the end date', async () => {
+      await dsl.admin
+        .bestClients({
+          start: '2021-01-01',
+          end: '2020-01-01',
+          limit: 1,
+        })
+        .expect(400, {
+          title: 'Bad Request',
+          detail: 'Your request data is invalid',
+          status: 400,
+          errors: [
+            {
+              code: 'custom',
+              message: 'End date must be greater than start date',
+              path: ['start'],
+            },
+          ],
+        });
+    });
     test.todo('Returns 400 when the limit is not a positive integer');
     test.todo(
       'Returns the clients that paid the most within the given date range',
