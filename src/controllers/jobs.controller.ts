@@ -1,5 +1,5 @@
 import { type Express, type RequestHandler } from 'express';
-import { Op } from 'sequelize';
+import { Op, type Transaction } from 'sequelize';
 
 import { conflict, httpError, notFound } from '../errors.js';
 import { getProfile } from '../middleware/getProfile.js';
@@ -83,7 +83,7 @@ export function registerJobsRoutes(app: Express) {
       const newBalance = profile.balance - job.price;
 
       const sequelize = req.app.get('sequelize');
-      await sequelize.transaction(async (t) => {
+      await sequelize.transaction(async (t: Transaction) => {
         await profile.update(
           {
             balance: newBalance,

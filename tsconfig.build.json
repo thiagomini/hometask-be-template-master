@@ -2,6 +2,5 @@
   "extends": "./tsconfig.common.json",
   "include": [
     "src/**/*.ts",
-    "types/**/*.ts"
   ]
 }

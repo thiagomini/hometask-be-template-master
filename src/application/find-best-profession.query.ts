@@ -1,5 +1,5 @@
 import { Op, type Sequelize } from 'sequelize';
-import { z } from 'zod';
+import { type ZodError, z } from 'zod';
 
 import { type ExpressHandler } from '../controllers/handler.type.js';
 import { badRequest } from '../errors.js';
@@ -32,11 +32,13 @@ export const findBestProfession: ExpressHandler<
     start: req.query.start && new Date(req.query.start),
     end: req.query.end && new Date(req.query.end),
   });
-  if (!result.success) {
+  // Zod only understands the "result" value has the "error" property when we check for strict equality with false
+  if (result.success === false) {
+    const error: ZodError = result.error;
     return res.status(400).json(
       badRequest({
         detail: 'Your request data is invalid',
-        errors: result.error.errors,
+        errors: error.errors,
       }),
     );
   }

@@ -6,7 +6,7 @@
     "checkJs": true,
     "target": "ESNext",
     "module": "NodeNext",
-    "strict": false,
+    "strict": true,
     "esModuleInterop": true,
     "types": ["node"],
     "typeRoots": ["node_modules/@types", "types"],

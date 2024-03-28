@@ -1,11 +1,17 @@
-import { QueryTypes } from 'sequelize';
+import { QueryTypes, type Sequelize } from 'sequelize';
 import { z } from 'zod';
 
-import { type ExpressHandler } from '../controllers/handler.type';
-import { badRequest } from '../errors';
+import { type ExpressHandler } from '../controllers/handler.type.js';
+import { badRequest } from '../errors.js';
+
+export type PayingClient = {
+  id: number;
+  fullName: string;
+  totalPaid: number;
+};
 
 export type FindBestClientsResponse =
-  | [{ id: number; fullName: string; totalPaid: number }]
+  | PayingClient[]
   | { detail?: string; errors?: unknown[]; title?: string };
 
 export type FindBestClientsQuery = {
@@ -31,8 +37,8 @@ export const findBestClients: ExpressHandler<
     });
 
   const result = schema.safeParse({
-    start: req.query.start && new Date(req.query.start as string),
-    end: req.query.end && new Date(req.query.end as string),
+    start: req.query.start && new Date(req.query.start),
+    end: req.query.end && new Date(req.query.end),
     limit: Number(req.query.limit),
   });
 
@@ -45,10 +51,11 @@ export const findBestClients: ExpressHandler<
     );
   }
 
-  const sequelize = req.app.get('sequelize');
+  const sequelize: Sequelize = req.app.get('sequelize');
 
-  const clientsThatPaidTheMostWithinPeriod = await sequelize.query(
-    `
+  const clientsThatPaidTheMostWithinPeriod =
+    await sequelize.query<PayingClient>(
+      `
       SELECT "Profiles"."id", "Profiles"."firstName" || ' ' || "Profiles"."lastName" as "fullName", SUM("price") AS "totalPaid"
       FROM "Profiles"
       INNER JOIN "Contracts" ON "Profiles"."id" = "Contracts"."clientId"
@@ -60,15 +67,15 @@ export const findBestClients: ExpressHandler<
       ORDER BY "totalPaid" DESC
       LIMIT ?
     `,
-    {
-      replacements: [
-        result.data.start,
-        result.data.end,
-        result.data.limit ?? 2,
-      ],
-      type: QueryTypes.SELECT,
-    },
-  );
+      {
+        replacements: [
+          result.data.start,
+          result.data.end,
+          result.data.limit ?? 2,
+        ],
+        type: QueryTypes.SELECT,
+      },
+    );
 
   res.json(clientsThatPaidTheMostWithinPeriod);
 };
