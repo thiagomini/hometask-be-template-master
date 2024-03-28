@@ -11,7 +11,7 @@ import {
 } from './factories/profile.factory.js';
 import app from '../src/app.js';
 
-describe('Admin E2E', { timeout: 100000 }, () => {
+describe('Admin E2E', { timeout: 1000 }, () => {
   const dsl = createDSL(app);
 
   before(() => {
@@ -140,8 +140,40 @@ describe('Admin E2E', { timeout: 100000 }, () => {
   });
 
   describe('GET /admin/best-clients?start=<date>&end=<date>&limit=<integer>', () => {
-    test.todo('Returns 400 when the start date is not a valid date');
-    test.todo('Returns 400 when the end date is not a valid date');
+    test('Returns 400 when the query parameters are invalid', async () => {
+      await dsl.admin
+        .bestClients({
+          start: 'not-a-date',
+          end: 'not-a-date',
+          limit: -1,
+        })
+        .expect(400, {
+          title: 'Bad Request',
+          detail: 'Your request data is invalid',
+          status: 400,
+          errors: [
+            {
+              code: 'invalid_date',
+              path: ['start'],
+              message: 'Invalid date',
+            },
+            {
+              code: 'invalid_date',
+              path: ['end'],
+              message: 'Invalid date',
+            },
+            {
+              code: 'too_small',
+              minimum: 0,
+              type: 'number',
+              inclusive: false,
+              exact: false,
+              message: 'Number must be greater than 0',
+              path: ['limit'],
+            },
+          ],
+        });
+    });
     test.todo('Returns 400 when the start date is greater than the end date');
     test.todo('Returns 400 when the limit is not a positive integer');
     test.todo(

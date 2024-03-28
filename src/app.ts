@@ -277,4 +277,34 @@ app.get('/admin/best-profession', async (req, res) => {
   });
 });
 
+app.get('/admin/best-clients', async (req, res) => {
+  const schema = z
+    .object({
+      start: z.date(),
+      end: z.date(),
+      limit: z.number().int().positive(),
+    })
+    .refine((data) => data.start < data.end, {
+      message: 'End date must be greater than start date',
+      path: ['start'],
+    });
+
+  const { data, error } = schema.safeParse({
+    start: new Date(req.query.start),
+    end: new Date(req.query.end),
+    limit: Number(req.query.limit),
+  });
+
+  if (error) {
+    return res.status(400).json(
+      badRequest({
+        detail: 'Your request data is invalid',
+        errors: error.errors,
+      }),
+    );
+  }
+
+  res.json({});
+});
+
 export default app;
