@@ -6,6 +6,6 @@ export function registerBalanceRoutes(app: Express) {
   app.post(
     '/balances/deposit/:id',
     validateParamId('Client'),
-    depositCommand as RequestHandler,
+    depositCommand as unknown as RequestHandler,
   );
 }

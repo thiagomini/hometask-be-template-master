@@ -1,4 +1,4 @@
-import { type ExpressHandler } from '../controllers/handler.type';
+import { type ExpressHandler } from '../controllers/handler.type.js';
 import {
   type HttpErrorResponse,
   conflict,
@@ -14,9 +14,15 @@ export type DepositCommandResponse = {
   newBalance: number;
 };
 
+export type DepositCommandParams = {
+  id: number;
+};
+
 export const depositCommand: ExpressHandler<
   DepositCommandBody,
-  DepositCommandResponse | HttpErrorResponse
+  DepositCommandResponse | HttpErrorResponse,
+  unknown,
+  DepositCommandParams
 > = async (req, res) => {
   const { Profile, Job, Contract } = req.app.get('models');
   const { id } = req.params;

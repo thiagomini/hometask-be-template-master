@@ -1,6 +1,6 @@
 import { type Transaction } from 'sequelize';
 
-import { type ExpressHandler } from '../controllers/handler.type';
+import { type ExpressHandler } from '../controllers/handler.type.js';
 import {
   type HttpErrorResponse,
   conflict,
