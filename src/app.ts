@@ -1,5 +1,6 @@
 import bodyParser from 'body-parser';
 import express from 'express';
+import helmet from 'helmet';
 import { Op, QueryTypes } from 'sequelize';
 import { z } from 'zod';
 
@@ -9,6 +10,7 @@ import { validateParamId } from './middleware/validators.js';
 import { sequelize } from './model.js';
 const app = express();
 app.use(bodyParser.json());
+app.use(helmet());
 app.set('sequelize', sequelize);
 app.set('models', sequelize.models);
 
