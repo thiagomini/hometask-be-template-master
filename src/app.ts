@@ -3,7 +3,7 @@ import express from 'express';
 import { Op } from 'sequelize';
 import { z } from 'zod';
 
-import { conflict, httpError, notFound } from './errors.js';
+import { badRequest, conflict, httpError, notFound } from './errors.js';
 import { getProfile } from './middleware/getProfile.js';
 import { validateParamId } from './middleware/validators.js';
 import { type Profile, sequelize } from './model.js';
@@ -222,17 +222,27 @@ app.post(
 );
 
 app.get('/admin/best-profession', async (req, res) => {
-  const schema = z.object({
-    start: z.date(),
-    end: z.date(),
-  });
-
-  const { data, error } = schema.safeParse(req.query);
-  if (error) {
-    return res.status(400).json({
-      title: 'Your request is not valid',
-      errors: error.errors,
+  const schema = z
+    .object({
+      start: z.date(),
+      end: z.date(),
+    })
+    .refine((data) => data.start < data.end, {
+      message: 'End date must be greater than start date',
+      path: ['start'],
     });
+
+  const { data, error } = schema.safeParse({
+    start: new Date(req.query.start),
+    end: new Date(req.query.end),
+  });
+  if (error) {
+    return res.status(400).json(
+      badRequest({
+        detail: 'Your request data is invalid',
+        errors: error.errors,
+      }),
+    );
   }
 
   res.json({});

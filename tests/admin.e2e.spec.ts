@@ -15,26 +15,42 @@ describe('Admin E2E', { timeout: 1000 }, () => {
           end: 'not-a-date',
         })
         .expect(400, {
-          title: 'Your request is not valid',
+          title: 'Bad Request',
+          detail: 'Your request data is invalid',
+          status: 400,
           errors: [
             {
-              code: 'invalid_type',
-              expected: 'date',
-              received: 'string',
+              code: 'invalid_date',
               path: ['start'],
-              message: 'Expected date, received string',
+              message: 'Invalid date',
             },
             {
-              code: 'invalid_type',
-              expected: 'date',
-              received: 'string',
+              code: 'invalid_date',
               path: ['end'],
-              message: 'Expected date, received string',
+              message: 'Invalid date',
             },
           ],
         });
     });
-    test.todo('Returns 400 when the start date is greater than the end date');
+    test('Returns 400 when the start date is greater than the end date', async () => {
+      await dsl.admin
+        .bestProfession({
+          start: '2021-01-01',
+          end: '2020-01-01',
+        })
+        .expect(400, {
+          title: 'Bad Request',
+          detail: 'Your request data is invalid',
+          status: 400,
+          errors: [
+            {
+              code: 'custom',
+              message: 'End date must be greater than start date',
+              path: ['start'],
+            },
+          ],
+        });
+    });
     test.todo(
       'Returns the profession that earned the most money within the given date range',
     );

@@ -5,11 +5,13 @@ export function httpError(options: {
   status: number;
   title?: string;
   detail?: string;
+  errors?: unknown[];
 }) {
   return {
     status: options.status,
     title: options.title,
     detail: options.detail,
+    errors: options.errors,
   };
 }
 
@@ -17,7 +19,7 @@ export function notFound(options: { detail: string }) {
   return httpError({ status: 404, title: 'Entity not found', ...options });
 }
 
-export function badRequest(options: { detail: string }) {
+export function badRequest(options: { detail: string; errors?: unknown[] }) {
   return httpError({ status: 400, title: 'Bad Request', ...options });
 }
 
