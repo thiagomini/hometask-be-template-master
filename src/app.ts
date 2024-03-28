@@ -45,7 +45,7 @@ app.post(
     const { Job, Contract } = req.app.get('models');
     const { id: jobId } = req.params;
 
-    const profile: Profile = req.profile;
+    const profile = req.profile;
 
     const job = await Job.findOne({
       where: {

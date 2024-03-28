@@ -2,7 +2,6 @@
   "extends": "./tsconfig.common.json",
   "include": [
     "src/**/*.ts",
-    "scripts/**/*.ts",
     "tests/**/*.ts",
     "types/**/*.ts",
   ],

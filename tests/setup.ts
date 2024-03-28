@@ -1,4 +1,4 @@
-import { Contract, Job, Profile } from '../src/model';
+import { Contract, Job, Profile } from '../src/model.js';
 
 console.debug('Syncing tables...');
 await Profile.sync({ force: true });

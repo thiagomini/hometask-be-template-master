@@ -1,7 +1,7 @@
 import { type Express } from 'express';
 import request from 'supertest';
 
-import { type RequestOptions } from './request.options';
+import { type RequestOptions } from './request.options.js';
 
 export type BalanceOptions = RequestOptions;
 
