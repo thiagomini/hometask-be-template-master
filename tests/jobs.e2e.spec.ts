@@ -13,7 +13,7 @@ import {
 } from './factories/profile.factory.js';
 import app from '../src/app.js';
 
-describe('Jobs E2E', () => {
+describe('Jobs E2E', { timeout: 1000 }, () => {
   const dsl = createDSL(app);
 
   before(() => {

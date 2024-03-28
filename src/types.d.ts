@@ -1,9 +1,7 @@
-/* eslint-disable @typescript-eslint/no-namespace */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Request } from 'express';
+import { type Request } from 'express';
 
-import { type Profile } from '../src/model.js';
-
+import { type Profile } from './model';
 declare global {
   namespace Express {
     export interface Request {
