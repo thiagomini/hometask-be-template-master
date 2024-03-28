@@ -248,8 +248,32 @@ app.get('/admin/best-profession', async (req, res) => {
   const { Contract, Job, Profile } = req.app.get('models');
   const { start, end } = data;
 
+  const [jobThatEarnedTheMost] = await Job.findAll({
+    where: {
+      paymentDate: {
+        [Op.between]: [start, end],
+      },
+      paid: true,
+    },
+    attributes: [[sequelize.fn('sum', sequelize.col('price')), 'total']],
+    include: [
+      {
+        model: Contract,
+        required: true,
+        include: {
+          model: Profile,
+          as: 'contractor',
+          required: true,
+        },
+      },
+    ],
+    group: [sequelize.col('Contract.contractor.profession')],
+    order: [[sequelize.literal('total'), 'DESC']],
+    limit: 1,
+  });
+
   res.status(200).json({
-    profession: 'designer',
+    profession: jobThatEarnedTheMost.Contract.contractor.profession,
   });
 });
 

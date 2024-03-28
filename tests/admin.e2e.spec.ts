@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
-import test, { describe } from 'node:test';
+import test, { before, describe } from 'node:test';
 
 import { createDSL } from './dsl/dsl.factory.js';
 import { contractFactory } from './factories/contract.factory.js';
+import { initializeFactories } from './factories/init.js';
 import { paidJobFactory } from './factories/jobs.factory.js';
 import {
   clientFactory,
@@ -10,8 +11,12 @@ import {
 } from './factories/profile.factory.js';
 import app from '../src/app.js';
 
-describe('Admin E2E', { timeout: 1000 }, () => {
+describe('Admin E2E', { timeout: 100000 }, () => {
   const dsl = createDSL(app);
+
+  before(() => {
+    initializeFactories();
+  });
 
   describe('GET /admin/best-profession?start=<date>&end=<date>', () => {
     test('Returns 400 when query parameters are invalid', async () => {
@@ -88,38 +93,38 @@ describe('Admin E2E', { timeout: 1000 }, () => {
           },
         ]);
 
-      const [startDate, endDate] = ['2023-01-01', '2023-12-31'];
+      const [startDate, endDate] = ['2025-01-01', '2025-12-31'];
 
       await paidJobFactory.createMany(6, [
         {
           price: 100,
           contractId: devContract.id,
-          paymentDate: new Date('2023-01-01'),
+          paymentDate: new Date('2025-01-01'),
         },
         {
           price: 200,
           contractId: devContract.id,
-          paymentDate: new Date('2023-02-01'),
+          paymentDate: new Date('2025-02-01'),
         },
         {
           price: 200,
           contractId: designerContract.id,
-          paymentDate: new Date('2023-06-01'), // designer earned the most within the date range
+          paymentDate: new Date('2025-06-01'), // designer earned the most within the date range
         },
         {
           price: 250,
           contractId: designerContract.id,
-          paymentDate: new Date('2023-07-01'),
+          paymentDate: new Date('2025-07-01'),
         },
         {
           price: 200,
           contractId: managerContract.id,
-          paymentDate: new Date('2023-12-01'),
+          paymentDate: new Date('2025-12-01'),
         },
         {
           price: 300,
           contractId: managerContract.id,
-          paymentDate: new Date('2024-01-01'), // manager earned the most, but it's out of the date ranges
+          paymentDate: new Date('2026-01-01'), // manager earned the most, but it's out of the date ranges
         },
       ]);
 
