@@ -4,14 +4,16 @@ type AnyObject = Record<string, unknown>;
 type TypedRequest<
   ReqBody = AnyObject & Request,
   QueryString = AnyObject,
-> = Request<AnyObject, AnyObject, ReqBody, Partial<QueryString>>;
+  ReqParams = AnyObject,
+> = Request<ReqParams, AnyObject, ReqBody, Partial<QueryString>>;
 
 export type ExpressHandler<
   ReqBody = AnyObject,
   Res = AnyObject | string,
   QueryString = AnyObject,
+  ReqParams = AnyObject,
 > = (
-  req: TypedRequest<ReqBody, QueryString>,
+  req: TypedRequest<ReqBody, QueryString, ReqParams>,
   res: Response<Res>,
   next: NextFunction,
 ) =>
