@@ -245,7 +245,12 @@ app.get('/admin/best-profession', async (req, res) => {
     );
   }
 
-  res.json({});
+  const { Contract, Job, Profile } = req.app.get('models');
+  const { start, end } = data;
+
+  res.status(200).json({
+    profession: 'designer',
+  });
 });
 
 export default app;
