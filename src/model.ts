@@ -17,6 +17,7 @@ export class Profile extends Sequelize.Model<
   declare readonly id: CreationOptional<number>;
   declare readonly firstName: string;
   declare readonly lastName: string;
+  declare readonly fullName: string;
   declare readonly profession: string;
   declare readonly balance: number;
   declare readonly type: 'client' | 'contractor';
@@ -47,6 +48,12 @@ Profile.init(
     },
     type: {
       type: Sequelize.ENUM('client', 'contractor'),
+    },
+    fullName: {
+      type: Sequelize.VIRTUAL,
+      get() {
+        return `${this.firstName} ${this.lastName}`;
+      },
     },
     createdAt: Sequelize.DATE,
     updatedAt: Sequelize.DATE,

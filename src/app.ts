@@ -1,12 +1,12 @@
 import bodyParser from 'body-parser';
 import express from 'express';
-import { Op } from 'sequelize';
+import { Op, QueryTypes } from 'sequelize';
 import { z } from 'zod';
 
 import { badRequest, conflict, httpError, notFound } from './errors.js';
 import { getProfile } from './middleware/getProfile.js';
 import { validateParamId } from './middleware/validators.js';
-import { type Profile, sequelize } from './model.js';
+import { sequelize } from './model.js';
 const app = express();
 app.use(bodyParser.json());
 app.set('sequelize', sequelize);
@@ -304,7 +304,28 @@ app.get('/admin/best-clients', async (req, res) => {
     );
   }
 
-  res.json({});
+  const sequelize = req.app.get('sequelize');
+
+  const clientsThatPaidTheMostWithinPeriod = await sequelize.query(
+    `
+    SELECT "Profiles"."id", "Profiles"."firstName" || ' ' || "Profiles"."lastName" as "fullName", SUM("price") AS "totalPaid"
+    FROM "Profiles"
+    INNER JOIN "Contracts" ON "Profiles"."id" = "Contracts"."clientId"
+    INNER JOIN "Jobs" ON "Contracts"."id" = "Jobs"."contractId"
+    WHERE "Profiles"."type" = 'client'
+    AND "Jobs"."paid" = true
+    AND "Jobs"."paymentDate" BETWEEN ? AND ?
+    GROUP BY "Profiles"."id"
+    ORDER BY "totalPaid" DESC
+    LIMIT ?
+  `,
+    {
+      replacements: [data.start, data.end, data.limit ?? 2],
+      type: QueryTypes.SELECT,
+    },
+  );
+
+  res.json(clientsThatPaidTheMostWithinPeriod);
 });
 
 export default app;

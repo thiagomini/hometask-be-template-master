@@ -128,6 +128,7 @@ describe('Admin E2E', { timeout: 1000 }, () => {
         },
       ]);
 
+      // Act
       await dsl.admin
         .bestProfession({
           start: startDate,
@@ -194,9 +195,70 @@ describe('Admin E2E', { timeout: 1000 }, () => {
           ],
         });
     });
-    test.todo('Returns 400 when the limit is not a positive integer');
-    test.todo(
-      'Returns the clients that paid the most within the given date range',
-    );
+    test('Returns the clients that paid the most within the given date range', async () => {
+      // Arrange
+      const [client1, client2, client3] = await clientFactory.createMany(3);
+      const [contract1, contract2, contract3] =
+        await contractFactory.createMany(3, [
+          { clientId: client1.id },
+          { clientId: client2.id },
+          { clientId: client3.id },
+        ]);
+
+      const [startDate, endDate] = ['2030-01-02', '2030-01-03'];
+
+      await paidJobFactory.createMany(6, [
+        {
+          price: 100,
+          contractId: contract1.id,
+          paymentDate: new Date('2030-01-02'),
+        },
+        {
+          price: 200,
+          contractId: contract1.id,
+          paymentDate: new Date('2030-01-02'),
+        },
+        {
+          price: 200,
+          contractId: contract2.id,
+          paymentDate: new Date('2030-01-02'),
+        },
+        {
+          price: 250,
+          contractId: contract2.id,
+          paymentDate: new Date('2030-01-02'), // client2 paid the most within the date range
+        },
+        {
+          price: 200,
+          contractId: contract3.id,
+          paymentDate: new Date('2030-01-02'),
+        },
+        {
+          price: 300,
+          contractId: contract3.id,
+          paymentDate: new Date('2030-01-03'), // client3 paid the most, but it's out of the date ranges
+        },
+      ]);
+
+      // Act
+      await dsl.admin
+        .bestClients({
+          start: startDate,
+          end: endDate,
+          limit: 2,
+        })
+        .expect(200, [
+          {
+            id: client2.id,
+            fullName: client2.fullName,
+            totalPaid: 450,
+          },
+          {
+            id: client1.id,
+            fullName: client1.fullName,
+            totalPaid: 300,
+          },
+        ]);
+    });
   });
 });
