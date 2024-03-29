@@ -36,7 +36,7 @@ export const depositCommand: ExpressHandler<
       }),
     );
 
-  if (user.type !== 'client') {
+  if (user.isContractor()) {
     return res.status(400).json(
       httpError({
         status: 400,
@@ -68,13 +68,10 @@ export const depositCommand: ExpressHandler<
       }),
     );
   }
-
   const newBalance = user.balance + depositAmount;
-
-  await user.update({
-    balance: newBalance,
-  });
-
+  user.deposit(depositAmount);
+  await user.save();
+  
   return res.status(200).json({
     newBalance,
   });

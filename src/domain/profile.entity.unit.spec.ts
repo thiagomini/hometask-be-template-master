@@ -69,4 +69,16 @@ describe('Profile entity', () => {
     // Assert
     assert.throws(() => user.pay(jobPrice), /Insufficient funds/);
   });
+
+  test('client deposits funds', async () => {
+    // Arrange
+    const user = await clientFactory.build({ balance: 50 });
+    const amount = 50;
+
+    // Act
+    user.deposit(amount);
+
+    // Assert
+    assert.equal(user.balance, 100);
+  });
 });

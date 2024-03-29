@@ -42,6 +42,10 @@ export class Profile extends Sequelize.Model<
     }
     this.set('balance', this.balance - price);
   }
+
+  public deposit(amount: number): number {
+    return this.set('balance', this.balance + amount).balance;
+  }
 }
 Profile.init(
   {
