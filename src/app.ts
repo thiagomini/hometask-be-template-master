@@ -1,7 +1,7 @@
 import bodyParser from 'body-parser';
 import express from 'express';
 import helmet from 'helmet';
-import logger from 'pino-http';
+import { pinoHttp } from 'pino-http';
 
 import { registerAdminRoutes } from './controllers/admin.controller.js';
 import { registerBalanceRoutes } from './controllers/balance.controller.js';
@@ -14,7 +14,7 @@ app.use(helmet());
 app.set('sequelize', sequelize);
 app.set('models', sequelize.models);
 app.use(
-  logger({
+  pinoHttp({
     transport: {
       target: 'pino-pretty',
       options: {
