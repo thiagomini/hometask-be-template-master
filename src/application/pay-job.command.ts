@@ -63,7 +63,7 @@ export const payJob: ExpressHandler<
     );
   }
 
-  if (profile.balance < job.price) {
+  if (!profile.hasEnoughBalance(job.price)) {
     return res.status(400).json(
       httpError({
         status: 400,
@@ -73,18 +73,12 @@ export const payJob: ExpressHandler<
     );
   }
 
-  const newBalance = profile.balance - job.price;
-
   const sequelize = req.app.get('sequelize');
   await sequelize.transaction(async (t: Transaction) => {
-    await profile.update(
-      {
-        balance: newBalance,
-      },
-      {
-        transaction: t,
-      },
-    );
+    profile.pay(job.price);
+    await profile.save({
+      transaction: t,
+    });
 
     await job.update(
       {
@@ -98,6 +92,6 @@ export const payJob: ExpressHandler<
   });
 
   return res.status(200).json({
-    newBalance,
+    newBalance: profile.balance,
   });
 };
