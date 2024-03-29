@@ -27,6 +27,10 @@ export class Profile extends Sequelize.Model<
   public isClient(): this is Profile & { type: 'client' } {
     return this.type === 'client';
   }
+
+  public isContractor(): this is Profile & { type: 'contractor' } {
+    return this.type === 'contractor';
+  }
 }
 Profile.init(
   {

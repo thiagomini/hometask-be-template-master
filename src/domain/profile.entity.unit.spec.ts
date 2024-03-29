@@ -14,10 +14,17 @@ describe('Profile entity', () => {
     // Arrange
     const user = await profileFactory.build({ type: 'client' });
 
-    // Act
-    const result = user.isClient();
+    // Assert
+    assert.equal(user.isClient(), true);
+    assert.equal(user.isContractor(), false);
+  });
+
+  test('is a contractor type', async () => {
+    // Arrange
+    const user = await profileFactory.build({ type: 'contractor' });
 
     // Assert
-    assert.equal(result, true);
+    assert.equal(user.isContractor(), true);
+    assert.equal(user.isClient(), false);
   });
 });
