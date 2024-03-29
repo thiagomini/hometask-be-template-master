@@ -35,6 +35,10 @@ export class Profile extends Sequelize.Model<
   public hasEnoughBalance(price: number): boolean {
     return this.balance >= price;
   }
+
+  public pay(price: number): void {
+    this.set('balance', this.balance - price);
+  }
 }
 Profile.init(
   {

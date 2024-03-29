@@ -3,7 +3,10 @@ import assert from 'node:assert/strict';
 import test, { before, describe } from 'node:test';
 
 import { initializeFactories } from '../../tests/factories/init.js';
-import { profileFactory } from '../../tests/factories/profile.factory.js';
+import {
+  clientFactory,
+  profileFactory,
+} from '../../tests/factories/profile.factory.js';
 
 describe('Profile entity', () => {
   before(() => {
@@ -30,10 +33,22 @@ describe('Profile entity', () => {
 
   test('has enough balance to pay for a job', async () => {
     // Arrange
-    const user = await profileFactory.build({ balance: 100 });
+    const user = await clientFactory.build({ balance: 100 });
     const jobPrice = 50;
 
     // Assert
     assert.equal(user.hasEnoughBalance(jobPrice), true);
+  });
+
+  test('pays for a job', async () => {
+    // Arrange
+    const user = await clientFactory.build({ balance: 100 });
+    const jobPrice = 50;
+
+    // Act
+    user.pay(jobPrice);
+
+    // Assert
+    assert.equal(user.balance, 50);
   });
 });
