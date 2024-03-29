@@ -1,6 +1,7 @@
 import bodyParser from 'body-parser';
 import express from 'express';
 import helmet from 'helmet';
+import logger from 'pino-http';
 
 import { registerAdminRoutes } from './controllers/admin.controller.js';
 import { registerBalanceRoutes } from './controllers/balance.controller.js';
@@ -12,11 +13,27 @@ app.use(bodyParser.json());
 app.use(helmet());
 app.set('sequelize', sequelize);
 app.set('models', sequelize.models);
+app.use(
+  logger({
+    transport: {
+      target: 'pino-pretty',
+      options: {
+        colorize: true,
+        colorizeObjects: true,
+        messageFormat: '{req.method} {req.url}',
+      },
+    },
+  }),
+);
 
 registerContractRoutes(app);
 registerJobsRoutes(app);
 registerBalanceRoutes(app);
 registerAdminRoutes(app);
+
+app.get('/', (_req, res) => {
+  res.send('Hello World!');
+});
 
 
 export default app;
