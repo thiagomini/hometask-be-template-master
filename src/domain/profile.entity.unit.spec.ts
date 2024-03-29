@@ -81,4 +81,13 @@ describe('Profile entity', () => {
     // Assert
     assert.equal(user.balance, 100);
   });
+
+  test('contractor cannot deposit funds', async () => {
+    // Arrange
+    const user = await profileFactory.build({ type: 'contractor' });
+    const amount = 50;
+
+    // Assert
+    assert.throws(() => user.deposit(amount), /Only clients can deposit funds/);
+  });
 });

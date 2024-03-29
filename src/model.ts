@@ -44,6 +44,9 @@ export class Profile extends Sequelize.Model<
   }
 
   public deposit(amount: number): number {
+    if (this.isContractor()) {
+      throw new Error('Only clients can deposit funds');
+    }
     return this.set('balance', this.balance + amount).balance;
   }
 }
