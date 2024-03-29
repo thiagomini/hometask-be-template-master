@@ -51,4 +51,13 @@ describe('Profile entity', () => {
     // Assert
     assert.equal(user.balance, 50);
   });
+
+  test('does not have enough balance to pay for a job', async () => {
+    // Arrange
+    const user = await clientFactory.build({ balance: 50 });
+    const jobPrice = 100;
+
+    // Assert
+    assert.throws(() => user.pay(jobPrice), /Insufficient funds/);
+  });
 });

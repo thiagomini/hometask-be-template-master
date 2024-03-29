@@ -37,6 +37,9 @@ export class Profile extends Sequelize.Model<
   }
 
   public pay(price: number): void {
+    if (!this.hasEnoughBalance(price)) {
+      throw new Error('Insufficient funds');
+    }
     this.set('balance', this.balance - price);
   }
 }
