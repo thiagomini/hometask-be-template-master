@@ -80,15 +80,10 @@ export const payJob: ExpressHandler<
       transaction: t,
     });
 
-    await job.update(
-      {
-        paid: true,
-        paymentDate: new Date(),
-      },
-      {
-        transaction: t,
-      },
-    );
+    job.confirmPayment(new Date());
+    await job.save({
+      transaction: t,
+    });
   });
 
   return res.status(200).json({
