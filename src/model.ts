@@ -31,6 +31,10 @@ export class Profile extends Sequelize.Model<
   public isContractor(): this is Profile & { type: 'contractor' } {
     return this.type === 'contractor';
   }
+
+  public hasEnoughBalance(price: number): boolean {
+    return this.balance >= price;
+  }
 }
 Profile.init(
   {
