@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import test, { before, describe } from 'node:test';
 
+import { assertMatches } from './assertions.js';
 import { createDSL } from './dsl/dsl.factory.js';
 import { contractFactory } from './factories/contract.factory.js';
 import { initializeFactories } from './factories/init.js';
@@ -87,18 +88,21 @@ describe('Jobs E2E', { timeout: 1000 }, () => {
         .listUnpaidJobs({
           profileId: aClient.id,
         })
-        .expect(200, [
-          {
-            id: unpaidJob.id,
-            description: unpaidJob.description,
-            price: unpaidJob.price,
-            paid: false,
-            paymentDate: null,
-            createdAt: unpaidJob.createdAt.toISOString(),
-            updatedAt: unpaidJob.updatedAt.toISOString(),
-            contractId: unpaidJob.contractId,
-          },
-        ]);
+        .expect(200)
+        .expect((res) =>
+          assertMatches(res.body, [
+            {
+              id: unpaidJob.id,
+              description: unpaidJob.description,
+              price: unpaidJob.price,
+              paid: false,
+              paymentDate: null,
+              createdAt: unpaidJob.createdAt.toISOString(),
+              updatedAt: unpaidJob.updatedAt.toISOString(),
+              contractId: unpaidJob.contractId,
+            },
+          ]),
+        );
     });
     test('Returns the list of unpaid active jobs belonging to the requesting contractor', async () => {
       // Arrange
@@ -121,18 +125,21 @@ describe('Jobs E2E', { timeout: 1000 }, () => {
         .listUnpaidJobs({
           profileId: aContractor.id,
         })
-        .expect(200, [
-          {
-            id: unpaidJob.id,
-            description: unpaidJob.description,
-            price: unpaidJob.price,
-            paid: unpaidJob.paid,
-            paymentDate: null,
-            createdAt: unpaidJob.createdAt.toISOString(),
-            updatedAt: unpaidJob.updatedAt.toISOString(),
-            contractId: unpaidJob.contractId,
-          },
-        ]);
+        .expect(200)
+        .expect((res) =>
+          assertMatches(res.body, [
+            {
+              id: unpaidJob.id,
+              description: unpaidJob.description,
+              price: unpaidJob.price,
+              paid: unpaidJob.paid,
+              paymentDate: null,
+              createdAt: unpaidJob.createdAt.toISOString(),
+              updatedAt: unpaidJob.updatedAt.toISOString(),
+              contractId: unpaidJob.contractId,
+            },
+          ]),
+        );
     });
   });
 

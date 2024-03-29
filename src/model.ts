@@ -87,6 +87,7 @@ Profile.init(
   {
     sequelize,
     modelName: 'Profile',
+    version: true,
   },
 );
 
@@ -174,6 +175,7 @@ Job.init(
   {
     sequelize,
     modelName: 'Job',
+    version: true,
   },
 );
 
