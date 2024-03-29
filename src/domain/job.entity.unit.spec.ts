@@ -22,4 +22,16 @@ describe('Job entity', () => {
     assert.equal(unpaidJob.paid, true);
     assert.equal(unpaidJob.paymentDate, at);
   });
+
+  test('cannot confirm payment twice', async () => {
+    // Arrange
+    const unpaidJob = await unpaidJobFactory.build({ price: 100 });
+    const at = new Date();
+
+    // Act
+    unpaidJob.confirmPayment(at);
+
+    // Assert
+    assert.throws(() => unpaidJob.confirmPayment(at), /Job is already paid/);
+  });
 });

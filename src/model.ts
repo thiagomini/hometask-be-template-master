@@ -132,6 +132,9 @@ export class Job extends Sequelize.Model<
   declare readonly contractId: ForeignKey<Contract['id']>;
 
   public confirmPayment(at: Date): void {
+    if (this.paid) {
+      throw new Error('Job is already paid');
+    }
     this.set('paid', true);
     this.set('paymentDate', at);
   }
