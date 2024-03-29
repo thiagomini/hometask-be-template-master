@@ -23,6 +23,7 @@
     "lint": "eslint ./src/**/*.ts --fix",
     "database:reset": "node --import tsx ./tests/setup.ts",
     "pretest:e2e": "node --import tsx ./tests/setup.ts",
+    "test": "glob -d -c \"node --import tsx --test\" **/*.unit.spec.ts",
     "test:e2e": "glob -d -c \"node --import tsx --test\" **/*.e2e.spec.ts",
     "typecheck": "tsc --noEmit -p tsconfig.eslint.json"
   },

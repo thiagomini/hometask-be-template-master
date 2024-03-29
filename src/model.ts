@@ -23,6 +23,10 @@ export class Profile extends Sequelize.Model<
   declare readonly type: 'client' | 'contractor';
   declare readonly createdAt: CreationOptional<Date>;
   declare readonly updatedAt: CreationOptional<Date>;
+
+  public isClient(): this is Profile & { type: 'client' } {
+    return this.type === 'client';
+  }
 }
 Profile.init(
   {
