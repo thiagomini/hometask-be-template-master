@@ -9,7 +9,7 @@
 - Extract out domain logic from the application layer (currently in both queries and controllers)
 
 
-# DEEL BACKEND TASK
+# BACKEND TASK
 
 💫 Welcome! 🎉
 
