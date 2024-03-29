@@ -40,6 +40,15 @@ describe('Profile entity', () => {
     assert.equal(user.hasEnoughBalance(jobPrice), true);
   });
 
+  test('does not have enough balance to pay for a job', async () => {
+    // Arrange
+    const user = await clientFactory.build({ balance: 50 });
+    const jobPrice = 100;
+
+    // Assert
+    assert.equal(user.hasEnoughBalance(jobPrice), false);
+  });
+
   test('pays for a job', async () => {
     // Arrange
     const user = await clientFactory.build({ balance: 100 });
