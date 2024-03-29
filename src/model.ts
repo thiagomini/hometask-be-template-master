@@ -130,6 +130,11 @@ export class Job extends Sequelize.Model<
   declare readonly createdAt: CreationOptional<Date>;
   declare readonly updatedAt: CreationOptional<Date>;
   declare readonly contractId: ForeignKey<Contract['id']>;
+
+  public confirmPayment(at: Date): void {
+    this.set('paid', true);
+    this.set('paymentDate', at);
+  }
 }
 Job.init(
   {
