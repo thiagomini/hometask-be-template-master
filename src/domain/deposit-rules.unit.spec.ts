@@ -2,7 +2,7 @@
 import assert from 'node:assert';
 import test, { describe } from 'node:test';
 
-import { deposits } from './deposit-rules';
+import { deposits } from './deposit-rules.js';
 
 describe('Deposit rules', () => {
   describe('A client cannot deposit more than 25% of the total amount of unpaid jobs', () => {
