@@ -1,4 +1,5 @@
 import { type ExpressHandler } from '../controllers/handler.type.js';
+import { deposits } from '../domain/deposit-rules.js';
 import {
   type HttpErrorResponse,
   conflict,
@@ -46,7 +47,7 @@ export const depositCommand: ExpressHandler<
     );
   }
 
-  const totalAmountToPay = await Job.sum('price', {
+  const totalAmountToPay: number = await Job.sum('price', {
     where: {
       paid: false,
       '$Contract.clientId$': user.id,
@@ -60,7 +61,7 @@ export const depositCommand: ExpressHandler<
 
   const depositAmount = req.body.amount;
 
-  if (depositAmount > totalAmountToPay * 1.25) {
+  if (!deposits.canDeposit(depositAmount, totalAmountToPay)) {
     return res.status(409).json(
       conflict({
         detail:
@@ -71,7 +72,7 @@ export const depositCommand: ExpressHandler<
   const newBalance = user.balance + depositAmount;
   user.deposit(depositAmount);
   await user.save();
-  
+
   return res.status(200).json({
     newBalance,
   });
