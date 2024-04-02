@@ -1,12 +1,12 @@
 # Tasks I'd like to complete if I had more time
 
 - Add caching mechanism for queries using redis
-- Create a docker image for the app
+- ~Create a docker image for the app~
 - Use Ngnix as a load balancer
-- Create load tests with k6
-- Use Pino Logger to improve observability
+- ~Create load tests with k6~
+- ~Use Pino Logger to improve observability~
 - Add custom eslint rule to ensure we're loading factory-girl-ts factories before each test file
-- Extract out domain logic from the application layer (currently in both queries and controllers)
+- ~Extract out domain logic from the application layer (currently in both queries and controllers)~
 
 
 # BACKEND TASK
