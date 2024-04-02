@@ -13,18 +13,20 @@ app.use(bodyParser.json());
 app.use(helmet());
 app.set('sequelize', sequelize);
 app.set('models', sequelize.models);
-app.use(
-  pinoHttp({
-    transport: {
-      target: 'pino-pretty',
-      options: {
-        colorize: true,
-        colorizeObjects: true,
-        messageFormat: '{req.method} {req.url}',
+if (process.env.NODE_ENV !== 'test') {
+  app.use(
+    pinoHttp({
+      transport: {
+        target: 'pino-pretty',
+        options: {
+          colorize: true,
+          colorizeObjects: true,
+          messageFormat: '{req.method} {req.url}',
+        },
       },
-    },
-  }),
-);
+    }),
+  );
+}
 
 registerContractRoutes(app);
 registerJobsRoutes(app);
