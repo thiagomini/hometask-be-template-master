@@ -23,6 +23,7 @@ export const findBestClients: ExpressHandler<
   FindBestClientsResponse,
   FindBestClientsQuery
 > = async (req, res) => {
+  // Schema definition could be extracted. Moreover, it could also be passed as a parameter.
   const schema = z
     .object({
       start: z.date(),
